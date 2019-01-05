@@ -18,11 +18,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class service_Chemist extends Fragment{
 
-    TextView scannedData;
     public service_Chemist() {
         // Required empty public constructor
 
     }
+
+
+    TextView scannedData;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -32,7 +35,6 @@ public class service_Chemist extends Fragment{
 
     private static final int SCAN_REQUEST_CODE = 0;
     private static final int PAY_REQUEST_CODE = 1;
-    private static final int ALLOW_REQUEST_CODE = 2;
 
 
 
@@ -49,9 +51,10 @@ public class service_Chemist extends Fragment{
         if (resultCode == RESULT_OK && requestCode == SCAN_REQUEST_CODE) {
             if (data.hasExtra("ScanRes") ) {
                 StringBuffer t = new StringBuffer(data.getExtras().getString("ScanRes"));
-                Toast.makeText(getActivity(), t.toString()+"SCAN", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), t.toString()+"SCAN", Toast.LENGTH_SHORT).show();
                 payButton.setEnabled(true);
                 allowAccessButton.setEnabled(true);
+                scannedData.setText(t.toString() + "Chemist");
             }
         }
 
@@ -70,7 +73,10 @@ public class service_Chemist extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_service__chemist, container, false);
-         scanButton = (Button) view.findViewById(R.id.button_scan);
+
+        scannedData = (TextView) view.findViewById(R.id.extraData);
+
+        scanButton = (Button) view.findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
