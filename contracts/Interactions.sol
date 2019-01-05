@@ -1,45 +1,43 @@
 pragma solidity ^0.4.23;
-//pragma experimental ABIEncoderV2;
+pragma experimental ABIEncoderV2;
 
 import "./Factory.sol";
 import "./SafeMath.sol";
 
 contract Interactions is Factory {
     using SafeMath for uint256;
-    using SafeMath for uint16;
-    using SafeMath for uint8;
 
     event newDataRequirement(string message, uint labId, uint bountyForEach);
 
-    function getPatientId(address addr) view returns(int){
+    function getPatientId(address addr) public view returns(int){
         for (uint i = 0; i < noOfPatients; i++)
             if (addr == patients[i].add)
                 return int(i);
         return - 1;
     }
 
-    function getDoctorId(address addr) view returns(int){
+    function getDoctorId(address addr) public view returns(int){
         for (uint i = 0; i < noOfDoctors; i++)
             if (addr == doctors[i].add)
                 return int(i);
         return - 1;
     }
 
-    function getLabId(address addr) view returns(int){
+    function getLabId(address addr) public view returns(int){
         for (uint i = 0; i < noOfLabs; i++)
             if (addr == labs[i].add)
                 return int(i);
         return - 1;
     }
 
-    function getPathologyId(address addr) view returns(int){
+    function getPathologyId(address addr) public view returns(int){
         for (uint i = 0; i < noOfPathologies; i++)
             if (addr == pathologies[i].add)
                 return int(i);
         return - 1;
     }
 
-    function getChemistId(address addr) external view returns(int){
+    function getChemistId(address addr) public view returns(int){
         for (uint i = 0; i < noOfChemists; i++)
             if (addr == chemists[i].add)
                 return int(i);
@@ -84,15 +82,15 @@ contract Interactions is Factory {
         chemistAddress.transfer(_fees);
     }
 
-    function alertDataRequirement(string _message, uint _number) external payable senderIsLab {
+    function alertDataRequirement(string _message, uint _number) public payable senderIsLab {
         require(msg.value > _number * 100);
         uint _labId = uint(getLabId(msg.sender));
-        uint _reqId = dataRequirements.push(DataRequirement(_message, _labId, uint(msg.value.div(_number)), _number, 0)) - 1;
+        dataRequirements.push(DataRequirement(_message, _labId, uint(msg.value.div(_number)), _number, 0)) - 1;
         noOfDataRequirements++;
         emit newDataRequirement(_message, _labId, uint(msg.value.div(_number)));
     }
 
-    function getBounty(uint _requirementId, string _url) external senderIsPatient {
+    function getBounty(uint _requirementId, string _url) public senderIsPatient {
         uint _patientId = uint(getPatientId(msg.sender));
         require(dataRequirements[_requirementId].gotData < dataRequirements[_requirementId].number, "Requirement has already been fulfilled");
         for (uint i = 0; i < noOfData; i++) {
@@ -107,17 +105,17 @@ contract Interactions is Factory {
         msg.sender.transfer(dataRequirements[_requirementId].bountyForEach);
     }
 
-//    function accessData(uint _requirementId) external view senderIsLab returns(Data[] memory ans){
-//        uint _labId = uint(getLabId(msg.sender));
-//        require(dataRequirements[_requirementId].labId == _labId, "You cannot access this data");
-//        uint no = dataRequirements[_requirementId].gotData;
-//        ans = new Data[](no);
-//        for (uint i = 0; i < noOfData; i++) {
-//            if (data[i].requirementId == _requirementId) {
-//                ans[i] = data[i];
-//            }
-//        }
-//        return ans;
-//    }
+    function accessData(uint _requirementId) public view senderIsLab returns(Data[] memory ans){
+        uint _labId = uint(getLabId(msg.sender));
+        require(dataRequirements[_requirementId].labId == _labId, "You cannot access this data");
+        uint no = dataRequirements[_requirementId].gotData;
+        ans = new Data[](no);
+        for (uint i = 0; i < noOfData; i++) {
+            if (data[i].requirementId == _requirementId) {
+                ans[i] = data[i];
+            }
+        }
+        return ans;
+    }
 //  TODO Supply chain
 }

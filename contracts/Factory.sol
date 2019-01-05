@@ -20,16 +20,9 @@ contract Factory is Ownable {
         address add;
         string email;
         string driveURL;
-        uint8 DOBDate;
-        uint8 DOBMonth;
-        uint16 DOBYear;
-        string medCondition;
-        string allergiesReactions;
-        string medication;
-        string bloodType;
-        string weight;
-        string height;
-        string emergencyContacts;
+        string presURL;
+        string infoURL;
+        string reportsURL;
         bool presUsed;
     }
 
@@ -96,40 +89,38 @@ contract Factory is Ownable {
     DataRequirement[] public dataRequirements;
     Data[] public data;
 
-    function newPatient(string _name, string _email, string _driveURL, uint8 _DOBDate, uint8 _DOBMonth, uint16 _DOBYear, string _medCondition,
-        string _allergiesReactions, string _medication, string _bloodType, string _weight, string _height, string _emergencyContacts) public
+    function newPatient(string _name, string _email, string _driveURL, string _presURL, string _infoURL, string _reportsURL) public
     {
         //        TODO FW: msg.sender must not already registered
-        uint _patientId = patients.push(Patient(_name, msg.sender, _email, _driveURL, _DOBDate, _DOBMonth, _DOBYear, _medCondition, _allergiesReactions, _medication,
-            _bloodType, _weight, _height, _emergencyContacts, true)) - 1;
+        patients.push(Patient(_name, msg.sender, _email, _driveURL, _presURL, _infoURL, _reportsURL, true)) - 1;
         noOfPatients++;
     }
 
     function newDoctor(string _name, string _email, string _license, string _physicalAdd, string _specialization) public
     {
         //        TODO FW: msg.sender must not already registered
-        uint _doctorId = doctors.push(Doctor(_name, msg.sender, _email, _license, _physicalAdd, _specialization)) - 1;
+        doctors.push(Doctor(_name, msg.sender, _email, _license, _physicalAdd, _specialization)) - 1;
         noOfDoctors++;
     }
 
     function newChemist(string _name, string _email, string _license, string _physicalAdd) public
     {
         //        TODO FW: msg.sender must not already registered
-        uint _chemistId = chemists.push(Chemist(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
+        chemists.push(Chemist(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
         noOfChemists++;
     }
 
     function newLab(string _name, string _email, string _license, string _details) public
     {
         //        TODO FW: msg.sender must not already registered
-        uint _labId = labs.push(Lab(_name, msg.sender, _email, _license, _details)) - 1;
+        labs.push(Lab(_name, msg.sender, _email, _license, _details)) - 1;
         noOfLabs++;
     }
 
     function newPathology(string _name, string _email, string _license, string _physicalAdd) public
     {
         //        TODO FW: msg.sender must not already registered
-        uint _pathologyId = pathologies.push(Pathology(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
+        pathologies.push(Pathology(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
         noOfPathologies++;
     }
 }
