@@ -41,7 +41,7 @@ App = {
   
   initContract: async function() {
     var a = false;
-    $.getJSON("Interactions.json", function(wellCareChain) {
+    $.getJSON("WellCareChain.json", function(wellCareChain) {
       App.contracts.WellCareChain = TruffleContract(wellCareChain);
       App.contracts.WellCareChain.setProvider(App.web3Provider);
       return App.setup();
