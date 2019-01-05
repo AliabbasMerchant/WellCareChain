@@ -124,4 +124,20 @@ contract Factory is Ownable {
         pathologies.push(Pathology(_name, msg.sender, _email, _license, _physicalAdd));
         noOfPathologies++;
     }
+	function getChemistEmail(uint chemistId) public view returns(string)
+	{
+		return chemists[chemistId].email;
+	}
+	function getDoctorEmail(uint doctorId) public view returns(string)
+	{
+		return doctors[doctorId].email;
+	}
+	function getPathologyEmail(uint pathologyId) public view returns(string)
+	{
+		return pathologies[pathologyId].email;
+	}
+	function getLabEmail(uint labId) public view returns(string)
+	{
+		return labs[labId].email;
+	}
 }
