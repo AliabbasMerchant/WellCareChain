@@ -1,5 +1,7 @@
 package com.example.max.wellcare;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,10 +23,20 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String MYTAG = "DEBUG_UI";
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        SharedPreferences sp = getApplicationContext().getSharedPreferences("MyPref",0);
+//        boolean registered = sp.getBoolean("registered",false);
+//        if(!registered)
+//        {
+//            Intent intent = new Intent(this,Register.class);
+//            startActivity(intent);
+//        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -44,13 +56,13 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         fm = getFragmentManager();
     }
 
 
-    private int currentFragmentIndex=0;
+    private int currentFragmentIndex=-1;
     FragmentManager fm ;
     FragmentTransaction ft ;
     public void changeFragment(int fragmentIndex)
@@ -62,6 +74,18 @@ public class MainActivity extends AppCompatActivity
         {
             switch(fragmentIndex)
             {
+                case 0:
+                    fragment = new myinfo_fragment();
+                    fm = getFragmentManager();
+                    ft = fm.beginTransaction();
+                    ft.addToBackStack("0");
+
+                    ft.replace(R.id.masterFragment_place,fragment);
+
+                    ft.commit();
+                    isFragmentChanged=true;
+                    break;
+
                 case 1:
                     fragment = new service_Pathalogy();
                     fm = getFragmentManager();
@@ -93,9 +117,7 @@ public class MainActivity extends AppCompatActivity
                     ft.commit();
                     isFragmentChanged=true;
                     break;
-                case 0:
-//                    isFragmentChanged=true;
-                    break;
+
                 default:
 
             }
@@ -151,6 +173,7 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             Log.i(MYTAG,"Edit Menu");
             changeFragment(0);
+
         } else if (id == R.id.nav_pathalogy) {
 
             Log.i(MYTAG,"Pathalogy");
