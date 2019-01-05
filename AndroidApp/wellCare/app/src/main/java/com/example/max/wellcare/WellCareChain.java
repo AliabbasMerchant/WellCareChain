@@ -32,11 +32,13 @@ import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 
+
+
 /**
  * <p>Auto generated code.
  * <p><strong>Do not modify!</strong>
  * <p>Please use the <a href="https://docs.web3j.io/command_line.html">web3j command line tools</a>,
- * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the 
+ * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the
  * <a href="https://github.com/web3j/web3j/tree/master/codegen">codegen module</a> to update.
  *
  * <p>Generated with web3j version 4.0.1.
@@ -110,23 +112,23 @@ public class WellCareChain extends Contract {
 
     public static final String FUNC_NEWPATIENT = "newPatient";
 
-    public static final Event NEWDOCTOR_EVENT = new Event("NewDoctor", 
+    public static final Event NEWDOCTOR_EVENT = new Event("NewDoctor",
             Arrays.<TypeReference<?>>asList());
     ;
 
-    public static final Event NEWCHEMIST_EVENT = new Event("NewChemist", 
+    public static final Event NEWCHEMIST_EVENT = new Event("NewChemist",
             Arrays.<TypeReference<?>>asList());
     ;
 
-    public static final Event NEWLAB_EVENT = new Event("NewLab", 
+    public static final Event NEWLAB_EVENT = new Event("NewLab",
             Arrays.<TypeReference<?>>asList());
     ;
 
-    public static final Event NEWPATHOLOGY_EVENT = new Event("NewPathology", 
+    public static final Event NEWPATHOLOGY_EVENT = new Event("NewPathology",
             Arrays.<TypeReference<?>>asList());
     ;
 
-    public static final Event NEWDATAREQUIREMENT_EVENT = new Event("newDataRequirement", 
+    public static final Event NEWDATAREQUIREMENT_EVENT = new Event("newDataRequirement",
             Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
     ;
 
@@ -150,69 +152,69 @@ public class WellCareChain extends Contract {
 
     public RemoteCall<TransactionReceipt> newLab(String _name, String _email, String _license, String _details) {
         final Function function = new Function(
-                FUNC_NEWLAB, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.Utf8String(_email), 
-                new org.web3j.abi.datatypes.Utf8String(_license), 
-                new org.web3j.abi.datatypes.Utf8String(_details)), 
+                FUNC_NEWLAB,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name),
+                        new org.web3j.abi.datatypes.Utf8String(_email),
+                        new org.web3j.abi.datatypes.Utf8String(_license),
+                        new org.web3j.abi.datatypes.Utf8String(_details)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<BigInteger> noOfDataRequirements() {
-        final Function function = new Function(FUNC_NOOFDATAREQUIREMENTS, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFDATAREQUIREMENTS,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> getPatientId(String addr) {
-        final Function function = new Function(FUNC_GETPATIENTID, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)), 
+        final Function function = new Function(FUNC_GETPATIENTID,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> noOfDoctors() {
-        final Function function = new Function(FUNC_NOOFDOCTORS, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFDOCTORS,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> getPathologyId(String addr) {
-        final Function function = new Function(FUNC_GETPATHOLOGYID, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)), 
+        final Function function = new Function(FUNC_GETPATHOLOGYID,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> noOfData() {
-        final Function function = new Function(FUNC_NOOFDATA, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFDATA,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<String> getPathologyEmail(BigInteger pathologyId) {
-        final Function function = new Function(FUNC_GETPATHOLOGYEMAIL, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(pathologyId)), 
+        final Function function = new Function(FUNC_GETPATHOLOGYEMAIL,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(pathologyId)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<TransactionReceipt> alertDataRequirement(String _message, BigInteger _number, BigInteger weiValue) {
         final Function function = new Function(
-                FUNC_ALERTDATAREQUIREMENT, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_message), 
-                new org.web3j.abi.datatypes.generated.Uint256(_number)), 
+                FUNC_ALERTDATAREQUIREMENT,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_message),
+                        new org.web3j.abi.datatypes.generated.Uint256(_number)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function, weiValue);
     }
 
     public RemoteCall<Tuple5<String, String, String, String, String>> labs(BigInteger param0) {
-        final Function function = new Function(FUNC_LABS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_LABS,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
         return new RemoteCall<Tuple5<String, String, String, String, String>>(
                 new Callable<Tuple5<String, String, String, String, String>>() {
@@ -220,10 +222,10 @@ public class WellCareChain extends Contract {
                     public Tuple5<String, String, String, String, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple5<String, String, String, String, String>(
-                                (String) results.get(0).getValue(), 
-                                (String) results.get(1).getValue(), 
-                                (String) results.get(2).getValue(), 
-                                (String) results.get(3).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (String) results.get(1).getValue(),
+                                (String) results.get(2).getValue(),
+                                (String) results.get(3).getValue(),
                                 (String) results.get(4).getValue());
                     }
                 });
@@ -231,16 +233,16 @@ public class WellCareChain extends Contract {
 
     public RemoteCall<TransactionReceipt> getBounty(BigInteger _requirementId, String _url) {
         final Function function = new Function(
-                FUNC_GETBOUNTY, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_requirementId), 
-                new org.web3j.abi.datatypes.Utf8String(_url)), 
+                FUNC_GETBOUNTY,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_requirementId),
+                        new org.web3j.abi.datatypes.Utf8String(_url)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<Tuple6<String, String, String, String, String, String>> doctors(BigInteger param0) {
-        final Function function = new Function(FUNC_DOCTORS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_DOCTORS,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
         return new RemoteCall<Tuple6<String, String, String, String, String, String>>(
                 new Callable<Tuple6<String, String, String, String, String, String>>() {
@@ -248,11 +250,11 @@ public class WellCareChain extends Contract {
                     public Tuple6<String, String, String, String, String, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple6<String, String, String, String, String, String>(
-                                (String) results.get(0).getValue(), 
-                                (String) results.get(1).getValue(), 
-                                (String) results.get(2).getValue(), 
-                                (String) results.get(3).getValue(), 
-                                (String) results.get(4).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (String) results.get(1).getValue(),
+                                (String) results.get(2).getValue(),
+                                (String) results.get(3).getValue(),
+                                (String) results.get(4).getValue(),
                                 (String) results.get(5).getValue());
                     }
                 });
@@ -260,31 +262,31 @@ public class WellCareChain extends Contract {
 
     public RemoteCall<TransactionReceipt> payToChemist(BigInteger _patientId, BigInteger _chemistId, BigInteger _fees, BigInteger weiValue) {
         final Function function = new Function(
-                FUNC_PAYTOCHEMIST, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_chemistId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_fees)), 
+                FUNC_PAYTOCHEMIST,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_chemistId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_fees)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function, weiValue);
     }
 
     public RemoteCall<BigInteger> noOfPatients() {
-        final Function function = new Function(FUNC_NOOFPATIENTS, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFPATIENTS,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<String> getDoctorEmail(BigInteger doctorId) {
-        final Function function = new Function(FUNC_GETDOCTOREMAIL, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(doctorId)), 
+        final Function function = new Function(FUNC_GETDOCTOREMAIL,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(doctorId)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<Tuple8<String, String, String, String, String, String, String, Boolean>> patients(BigInteger param0) {
-        final Function function = new Function(FUNC_PATIENTS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_PATIENTS,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Bool>() {}));
         return new RemoteCall<Tuple8<String, String, String, String, String, String, String, Boolean>>(
                 new Callable<Tuple8<String, String, String, String, String, String, String, Boolean>>() {
@@ -292,13 +294,13 @@ public class WellCareChain extends Contract {
                     public Tuple8<String, String, String, String, String, String, String, Boolean> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple8<String, String, String, String, String, String, String, Boolean>(
-                                (String) results.get(0).getValue(), 
-                                (String) results.get(1).getValue(), 
-                                (String) results.get(2).getValue(), 
-                                (String) results.get(3).getValue(), 
-                                (String) results.get(4).getValue(), 
-                                (String) results.get(5).getValue(), 
-                                (String) results.get(6).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (String) results.get(1).getValue(),
+                                (String) results.get(2).getValue(),
+                                (String) results.get(3).getValue(),
+                                (String) results.get(4).getValue(),
+                                (String) results.get(5).getValue(),
+                                (String) results.get(6).getValue(),
                                 (Boolean) results.get(7).getValue());
                     }
                 });
@@ -306,74 +308,74 @@ public class WellCareChain extends Contract {
 
     public RemoteCall<TransactionReceipt> newChemist(String _name, String _email, String _license, String _physicalAdd) {
         final Function function = new Function(
-                FUNC_NEWCHEMIST, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.Utf8String(_email), 
-                new org.web3j.abi.datatypes.Utf8String(_license), 
-                new org.web3j.abi.datatypes.Utf8String(_physicalAdd)), 
+                FUNC_NEWCHEMIST,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name),
+                        new org.web3j.abi.datatypes.Utf8String(_email),
+                        new org.web3j.abi.datatypes.Utf8String(_license),
+                        new org.web3j.abi.datatypes.Utf8String(_physicalAdd)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<String> getLabEmail(BigInteger labId) {
-        final Function function = new Function(FUNC_GETLABEMAIL, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(labId)), 
+        final Function function = new Function(FUNC_GETLABEMAIL,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(labId)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<BigInteger> noOfLabs() {
-        final Function function = new Function(FUNC_NOOFLABS, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFLABS,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<TransactionReceipt> newPathology(String _name, String _email, String _license, String _physicalAdd) {
         final Function function = new Function(
-                FUNC_NEWPATHOLOGY, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.Utf8String(_email), 
-                new org.web3j.abi.datatypes.Utf8String(_license), 
-                new org.web3j.abi.datatypes.Utf8String(_physicalAdd)), 
+                FUNC_NEWPATHOLOGY,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name),
+                        new org.web3j.abi.datatypes.Utf8String(_email),
+                        new org.web3j.abi.datatypes.Utf8String(_license),
+                        new org.web3j.abi.datatypes.Utf8String(_physicalAdd)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<BigInteger> noOfPathologies() {
-        final Function function = new Function(FUNC_NOOFPATHOLOGIES, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFPATHOLOGIES,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> getDoctorId(String addr) {
-        final Function function = new Function(FUNC_GETDOCTORID, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)), 
+        final Function function = new Function(FUNC_GETDOCTORID,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> getLabId(String addr) {
-        final Function function = new Function(FUNC_GETLABID, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)), 
+        final Function function = new Function(FUNC_GETLABID,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<TransactionReceipt> payToDoctor(BigInteger _patientId, BigInteger _doctorId, BigInteger _fees, BigInteger weiValue) {
         final Function function = new Function(
-                FUNC_PAYTODOCTOR, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_doctorId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_fees)), 
+                FUNC_PAYTODOCTOR,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_doctorId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_fees)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function, weiValue);
     }
 
     public RemoteCall<Tuple5<String, BigInteger, BigInteger, BigInteger, BigInteger>> dataRequirements(BigInteger param0) {
-        final Function function = new Function(FUNC_DATAREQUIREMENTS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_DATAREQUIREMENTS,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
         return new RemoteCall<Tuple5<String, BigInteger, BigInteger, BigInteger, BigInteger>>(
                 new Callable<Tuple5<String, BigInteger, BigInteger, BigInteger, BigInteger>>() {
@@ -381,55 +383,55 @@ public class WellCareChain extends Contract {
                     public Tuple5<String, BigInteger, BigInteger, BigInteger, BigInteger> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple5<String, BigInteger, BigInteger, BigInteger, BigInteger>(
-                                (String) results.get(0).getValue(), 
-                                (BigInteger) results.get(1).getValue(), 
-                                (BigInteger) results.get(2).getValue(), 
-                                (BigInteger) results.get(3).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (BigInteger) results.get(1).getValue(),
+                                (BigInteger) results.get(2).getValue(),
+                                (BigInteger) results.get(3).getValue(),
                                 (BigInteger) results.get(4).getValue());
                     }
                 });
     }
 
     public RemoteCall<BigInteger> getChemistId(String addr) {
-        final Function function = new Function(FUNC_GETCHEMISTID, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)), 
+        final Function function = new Function(FUNC_GETCHEMISTID,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(addr)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<TransactionReceipt> newDoctor(String _name, String _email, String _license, String _physicalAdd, String _specialization) {
         final Function function = new Function(
-                FUNC_NEWDOCTOR, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.Utf8String(_email), 
-                new org.web3j.abi.datatypes.Utf8String(_license), 
-                new org.web3j.abi.datatypes.Utf8String(_physicalAdd), 
-                new org.web3j.abi.datatypes.Utf8String(_specialization)), 
+                FUNC_NEWDOCTOR,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name),
+                        new org.web3j.abi.datatypes.Utf8String(_email),
+                        new org.web3j.abi.datatypes.Utf8String(_license),
+                        new org.web3j.abi.datatypes.Utf8String(_physicalAdd),
+                        new org.web3j.abi.datatypes.Utf8String(_specialization)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<BigInteger> noOfChemists() {
-        final Function function = new Function(FUNC_NOOFCHEMISTS, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_NOOFCHEMISTS,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<TransactionReceipt> payToPathology(BigInteger _patientId, BigInteger _pathologyId, BigInteger _fees, String info, BigInteger weiValue) {
         final Function function = new Function(
-                FUNC_PAYTOPATHOLOGY, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_pathologyId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_fees), 
-                new org.web3j.abi.datatypes.Utf8String(info)), 
+                FUNC_PAYTOPATHOLOGY,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_patientId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_pathologyId),
+                        new org.web3j.abi.datatypes.generated.Uint256(_fees),
+                        new org.web3j.abi.datatypes.Utf8String(info)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function, weiValue);
     }
 
     public RemoteCall<Tuple5<String, String, String, String, String>> chemists(BigInteger param0) {
-        final Function function = new Function(FUNC_CHEMISTS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_CHEMISTS,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
         return new RemoteCall<Tuple5<String, String, String, String, String>>(
                 new Callable<Tuple5<String, String, String, String, String>>() {
@@ -437,18 +439,18 @@ public class WellCareChain extends Contract {
                     public Tuple5<String, String, String, String, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple5<String, String, String, String, String>(
-                                (String) results.get(0).getValue(), 
-                                (String) results.get(1).getValue(), 
-                                (String) results.get(2).getValue(), 
-                                (String) results.get(3).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (String) results.get(1).getValue(),
+                                (String) results.get(2).getValue(),
+                                (String) results.get(3).getValue(),
                                 (String) results.get(4).getValue());
                     }
                 });
     }
 
     public RemoteCall<Tuple3<BigInteger, BigInteger, String>> data(BigInteger param0) {
-        final Function function = new Function(FUNC_DATA, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_DATA,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Utf8String>() {}));
         return new RemoteCall<Tuple3<BigInteger, BigInteger, String>>(
                 new Callable<Tuple3<BigInteger, BigInteger, String>>() {
@@ -456,23 +458,23 @@ public class WellCareChain extends Contract {
                     public Tuple3<BigInteger, BigInteger, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple3<BigInteger, BigInteger, String>(
-                                (BigInteger) results.get(0).getValue(), 
-                                (BigInteger) results.get(1).getValue(), 
+                                (BigInteger) results.get(0).getValue(),
+                                (BigInteger) results.get(1).getValue(),
                                 (String) results.get(2).getValue());
                     }
                 });
     }
 
     public RemoteCall<String> getChemistEmail(BigInteger chemistId) {
-        final Function function = new Function(FUNC_GETCHEMISTEMAIL, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(chemistId)), 
+        final Function function = new Function(FUNC_GETCHEMISTEMAIL,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(chemistId)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<Tuple5<String, String, String, String, String>> pathologies(BigInteger param0) {
-        final Function function = new Function(FUNC_PATHOLOGIES, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final Function function = new Function(FUNC_PATHOLOGIES,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
         return new RemoteCall<Tuple5<String, String, String, String, String>>(
                 new Callable<Tuple5<String, String, String, String, String>>() {
@@ -480,10 +482,10 @@ public class WellCareChain extends Contract {
                     public Tuple5<String, String, String, String, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple5<String, String, String, String, String>(
-                                (String) results.get(0).getValue(), 
-                                (String) results.get(1).getValue(), 
-                                (String) results.get(2).getValue(), 
-                                (String) results.get(3).getValue(), 
+                                (String) results.get(0).getValue(),
+                                (String) results.get(1).getValue(),
+                                (String) results.get(2).getValue(),
+                                (String) results.get(3).getValue(),
                                 (String) results.get(4).getValue());
                     }
                 });
@@ -491,13 +493,13 @@ public class WellCareChain extends Contract {
 
     public RemoteCall<TransactionReceipt> newPatient(String _name, String _email, String _driveURL, String _presURL, String _infoURL, String _reportsURL) {
         final Function function = new Function(
-                FUNC_NEWPATIENT, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.Utf8String(_email), 
-                new org.web3j.abi.datatypes.Utf8String(_driveURL), 
-                new org.web3j.abi.datatypes.Utf8String(_presURL), 
-                new org.web3j.abi.datatypes.Utf8String(_infoURL), 
-                new org.web3j.abi.datatypes.Utf8String(_reportsURL)), 
+                FUNC_NEWPATIENT,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name),
+                        new org.web3j.abi.datatypes.Utf8String(_email),
+                        new org.web3j.abi.datatypes.Utf8String(_driveURL),
+                        new org.web3j.abi.datatypes.Utf8String(_presURL),
+                        new org.web3j.abi.datatypes.Utf8String(_infoURL),
+                        new org.web3j.abi.datatypes.Utf8String(_reportsURL)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }

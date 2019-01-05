@@ -1,6 +1,7 @@
 package com.example.max.wellcare;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,17 +10,23 @@ import android.provider.OpenableColumns;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -91,7 +98,7 @@ public class DriveServiceHelper {
             return permission.getId();
         });
     }
-    public void giveWriteAccessFor5Minutes(String fileId, String emailId) {
+    public void giveWriteAccessForXMillis(String fileId, String emailId, int millis) {
         createPermission(fileId, emailId, "write")
             .addOnSuccessListener(permissionId -> {
                 Log.e("DriveServiceHelper", "giveWriteAccessFor5Minutes");
@@ -99,9 +106,23 @@ public class DriveServiceHelper {
                 handler.postDelayed(() -> {
                     removePermission(fileId, permissionId);
                     Log.e("DriveServiceHelper", "Permission Revoked");
-                }, 2*60*1000);
+                }, millis);
             })
             .addOnFailureListener(exception -> {});
+    }
+    static DriveServiceHelper getGoogleDriveServiceHelper(Context context, GoogleSignInAccount account) {
+        GoogleAccountCredential credential =
+            GoogleAccountCredential.usingOAuth2(
+                context, ImmutableSet.of(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE));
+        credential.setSelectedAccount(account.getAccount());
+        Drive googleDriveService =
+            new Drive.Builder(
+                AndroidHttp.newCompatibleTransport(),
+                new GsonFactory(),
+                credential)
+                .setApplicationName("WellCareChain")
+                .build();
+        return new DriveServiceHelper(googleDriveService);
     }
 
 

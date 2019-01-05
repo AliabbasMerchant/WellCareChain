@@ -39,25 +39,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-
-            <Button
-                android:id="@+id/button_allowAccess"
-                android:layout_width="110dp"
-                android:layout_height="70dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginTop="50dp"
-                android:enabled="false"
-                android:text="Allow Access" />
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/button_pay"
                 android:layout_width="110dp"
                 android:layout_height="70dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginStart="150dp"
                 android:layout_marginTop="50dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="50dp"
                 android:enabled="false"
                 android:text="Pay" />
 

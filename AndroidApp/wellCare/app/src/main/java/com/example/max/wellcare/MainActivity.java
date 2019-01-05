@@ -29,13 +29,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        SharedPreferences sp = getApplicationContext().getSharedPreferences("MyPref",0);
-//        boolean registered = sp.getBoolean("registered",false);
-//        if(!registered)
-//        {
-//            Intent intent = new Intent(this,Register.class);
-//            startActivity(intent);
-//        }
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("MyPref",0);
+        boolean registered = sp.getBoolean("registered",false);
+        if(!registered)
+        {
+            Intent intent = new Intent(this,Register.class);
+            startActivity(intent);
+        }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

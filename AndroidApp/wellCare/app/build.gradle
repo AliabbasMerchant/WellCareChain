@@ -42,7 +42,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 //    implementation 'com.google.android.gms:play-services-drive:16.0.0'
     implementation 'com.budiyev.android:code-scanner:2.1.0'
-    implementation 'org.web3j:core:3.3.1-android'
+    implementation 'org.web3j:core:4.1.0-android'
+//    implementation 'org.web3j:core:3.1.1-android'
+//    implementation 'org.web3j:core:3.3.1-android'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.5"
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 

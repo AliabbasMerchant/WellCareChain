@@ -10,18 +10,22 @@ import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletFile;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+import java.security.spec.ECGenParameterSpec;
 import java.util.UUID;
-
+import static org.web3j.crypto.Keys.createEcKeyPair;
 import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 import static org.web3j.tx.Transfer.GAS_LIMIT;
 
@@ -31,7 +35,8 @@ class BlockchainHelper {
     private static String ContractAddress = "0x";
     private static final String TAG = "BlockchainHelper";
     static BigInteger register(String _name, String _email, String _driveURL, String _presURL, String _infoURL, String _reportsURL) {
-        Web3j web3j = Web3jFactory.build(new HttpService(URL));
+//        Web3j web3j = Web3jFactory.build(new HttpService(URL));
+        Web3j web3j = Web3j.build(new HttpService(URL));
         BigInteger patientId = new BigInteger("-1");
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -98,7 +103,7 @@ class BlockchainHelper {
         String seed = UUID.randomUUID().toString();
         JSONObject processJson = new JSONObject();
         try {
-            ECKeyPair ecKeyPair = Keys.createEcKeyPair();
+            ECKeyPair ecKeyPair = createEcKeyPair();
             BigInteger privateKeyInDec = ecKeyPair.getPrivateKey();
             sPrivateKeyInHex = privateKeyInDec.toString(16);
             WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
@@ -121,7 +126,7 @@ class BlockchainHelper {
 //        return "Name: " + name + "\nEmail Address: " + email + "\nLicense: " + license + "\nAddress: " + physicalAdd;
 //    }
     static void payToDoctor(BigInteger patientId, BigInteger doctorId, BigInteger fees) {
-        Web3j web3j = Web3jFactory.build(new HttpService(URL));
+        Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
         } catch (IOException e) {
@@ -138,7 +143,7 @@ class BlockchainHelper {
     }
 
     static void payToPathology(BigInteger patientId, BigInteger pathologyId, BigInteger fees, String info) {
-        Web3j web3j = Web3jFactory.build(new HttpService(URL));
+        Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
         } catch (IOException e) {
@@ -155,7 +160,7 @@ class BlockchainHelper {
     }
 
     static void payToChemist(BigInteger patientId, BigInteger chemistId, BigInteger fees) {
-        Web3j web3j = Web3jFactory.build(new HttpService(URL));
+        Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
         } catch (IOException e) {
@@ -169,6 +174,42 @@ class BlockchainHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static String getDoctorEmail(BigInteger doctorId) {
+        Web3j web3j = Web3j.build(new HttpService(URL));
+        try {
+            logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        logger("Credentials loaded");
+        WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+        try {
+            return contract.getDoctorEmail(doctorId).send();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    static String getPathologyEmail(BigInteger pathologyId) {
+        Web3j web3j = Web3j.build(new HttpService(URL));
+        try {
+            logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        logger("Credentials loaded");
+        WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+        try {
+            return contract.getPathologyEmail(pathologyId).send();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     static void getBounty(BigInteger requirementId, String URL) {
