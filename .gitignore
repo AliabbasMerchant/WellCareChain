@@ -1,2 +1,4 @@
 .idea
 node_modules/
+contracts/a
+contracts/web3j-4.0.1
