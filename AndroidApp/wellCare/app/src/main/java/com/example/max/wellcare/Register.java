@@ -10,69 +10,128 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.common.collect.ImmutableSet;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collections;
 
 public class Register extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
-
     private static final int REQUEST_CODE_SIGN_IN = 1;
-    private static final int REQUEST_CODE_OPEN_DOCUMENT = 2;
-
+    private String name, emailAddress, folderId, presFolderId, infoFolderId, reportsFolderId, docRepFolderId;
+    private long patientId;
     private DriveServiceHelper mDriveServiceHelper;
-    private String mOpenFileId;
-
-    private EditText mFileTitleEditText;
-    private EditText mDocContentEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFileTitleEditText = findViewById(R.id.file_title_edittext);
-        mDocContentEditText = findViewById(R.id.doc_content_edittext);
-
-        // Set the onClick listeners for the button bar.
-        findViewById(R.id.open_btn).setOnClickListener(view -> openFilePicker());
-        findViewById(R.id.create_btn).setOnClickListener(view -> createFile());
-        findViewById(R.id.save_btn).setOnClickListener(view -> saveFile());
-        findViewById(R.id.query_btn).setOnClickListener(view -> query());
-
-        // Authenticate the user. For most apps, this should be done when the user performs an
-        // action that requires Drive access rather than in onCreate.
+        findViewById(R.id.registerButton).setOnClickListener(view -> register());
         requestSignIn();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        switch (requestCode) {
-            case REQUEST_CODE_SIGN_IN:
-                if (resultCode == Activity.RESULT_OK && resultData != null) {
-                    handleSignInResult(resultData);
-                }
-                break;
+    public void onBackPressed() {
+        Toast.makeText(this, "Please Register!", Toast.LENGTH_SHORT).show();
+    }
 
-            case REQUEST_CODE_OPEN_DOCUMENT:
-                if (resultCode == Activity.RESULT_OK && resultData != null) {
-                    Uri uri = resultData.getData();
-                    if (uri != null) {
-                        openFileFromFilePicker(uri);
-                    }
-                }
-                break;
+    private void register() {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Registering...");
+            Toast.makeText(this, "Registering...", Toast.LENGTH_SHORT).show();
+
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            SharedPreferences.Editor editor = pref.edit();
+
+            mDriveServiceHelper.createFolder("WellCareChain", Collections.singletonList("root"))
+                    .addOnSuccessListener(fileId -> {
+                        editor.putString("folderId", fileId);
+                        mDriveServiceHelper.createFolder("Prescription", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("presFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Emergency Info", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("infoFolderId", id);
+                                    mDriveServiceHelper.makePublicReadable(id)
+                                            .addOnSuccessListener(permissionId -> {})
+                                            .addOnFailureListener(exception ->
+                                                    Log.e(TAG, "Couldn't make emergency info public.", exception));
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Reports", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("reportsFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Doctor Reports", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("docRepFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        editor.commit();
+                    })
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't create file.", exception));
+            folderId = pref.getString("folderId", "root");
+            presFolderId = pref.getString("presFolderId", "root");
+            infoFolderId = pref.getString("infoFolderId", "root");
+            reportsFolderId = pref.getString("reportsFolderId", "root");
+            docRepFolderId = pref.getString("docRepFolderId", "root");
+            registerOnBlockchain();
+            editor.putBoolean("registered", true);
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
         }
+    }
+    private void registerOnBlockchain() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        String driveURL = "https://drive.google.com/open?id=" + folderId;
+        String presURL = "https://drive.google.com/open?id=" + presFolderId;
+        String infoURL = "https://drive.google.com/open?id=" + infoFolderId;
+        String reportsURL = "https://drive.google.com/open?id=" + reportsFolderId;
+        JSONObject credentials = BlockchainHelper.generateCredentials();
+        try {
+            String sPrivateKeyInHex = credentials.getString("address");
+            String sAddress = credentials.getString("privateKey");
+            BlockchainHelper.sPrivateKeyInHex = sPrivateKeyInHex;
+            BlockchainHelper.sAddress = sAddress;
+            patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
+            editor.putLong("patientId", patientId);
+            editor.putString("address", sAddress);
+            editor.putString("privateKey", sPrivateKeyInHex);
+            editor.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (resultCode == Activity.RESULT_OK && resultData != null) {
+            handleSignInResult(resultData);
+        }
         super.onActivityResult(requestCode, resultCode, resultData);
     }
 
@@ -100,161 +159,24 @@ public class Register extends AppCompatActivity {
     private void handleSignInResult(Intent result) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
                 .addOnSuccessListener(googleAccount -> {
+                    emailAddress = googleAccount.getEmail();
+                    name = googleAccount.getDisplayName();
                     Log.d(TAG, "Signed in as " + googleAccount.getEmail());
-
-                    // Use the authenticated account to sign in to the Drive service.
                     GoogleAccountCredential credential =
                             GoogleAccountCredential.usingOAuth2(
-                                    this, Collections.singleton(DriveScopes.DRIVE_FILE));
+                                    this, ImmutableSet.of(DriveScopes.DRIVE_FILE));
                     credential.setSelectedAccount(googleAccount.getAccount());
                     Drive googleDriveService =
                             new Drive.Builder(
                                     AndroidHttp.newCompatibleTransport(),
                                     new GsonFactory(),
                                     credential)
-                                    .setApplicationName("Drive API Migration")
+                                    .setApplicationName("WellCareChain")
                                     .build();
 
-                    // The DriveServiceHelper encapsulates all REST API and SAF functionality.
-                    // Its instantiation is required before handling any onClick actions.
                     mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
                 })
                 .addOnFailureListener(exception -> Log.e(TAG, "Unable to sign in.", exception));
-    }
-
-    /**
-     * Opens the Storage Access Framework file picker using {@link #REQUEST_CODE_OPEN_DOCUMENT}.
-     */
-    private void openFilePicker() {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Opening file picker.");
-
-            Intent pickerIntent = mDriveServiceHelper.createFilePickerIntent();
-
-            // The result of the SAF Intent is handled in onActivityResult.
-            startActivityForResult(pickerIntent, REQUEST_CODE_OPEN_DOCUMENT);
-        }
-    }
-
-    /**
-     * Opens a file from its {@code uri} returned from the Storage Access Framework file picker
-     * initiated by {@link #openFilePicker()}.
-     */
-    private void openFileFromFilePicker(Uri uri) {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Opening " + uri.getPath());
-
-            mDriveServiceHelper.openFileUsingStorageAccessFramework(getContentResolver(), uri)
-                    .addOnSuccessListener(nameAndContent -> {
-                        String name = nameAndContent.first;
-                        String content = nameAndContent.second;
-
-                        mFileTitleEditText.setText(name);
-                        mDocContentEditText.setText(content);
-
-                        // Files opened through SAF cannot be modified, except by retrieving the
-                        // fileId from its metadata and updating it via the REST API. To modify
-                        // files not created by your app, you will need to request the Drive
-                        // Full Scope and submit your app to Google for review.
-                        setReadOnlyMode();
-                    })
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Unable to open file from picker.", exception));
-        }
-    }
-
-    /**
-     * Creates a new file via the Drive REST API.
-     */
-    private void createFile() {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Creating a file.");
-
-            mDriveServiceHelper.createFile()
-                    .addOnSuccessListener(fileId -> readFile(fileId))
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Couldn't create file.", exception));
-        }
-    }
-
-    /**
-     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
-     */
-    private void readFile(String fileId) {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Reading file " + fileId);
-
-            mDriveServiceHelper.readFile(fileId)
-                    .addOnSuccessListener(nameAndContent -> {
-                        String name = nameAndContent.first;
-                        String content = nameAndContent.second;
-
-                        mFileTitleEditText.setText(name);
-                        mDocContentEditText.setText(content);
-
-                        setReadWriteMode(fileId);
-                    })
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Couldn't read file.", exception));
-        }
-    }
-
-    /**
-     * Saves the currently opened file created via {@link #createFile()} if one exists.
-     */
-    private void saveFile() {
-        if (mDriveServiceHelper != null && mOpenFileId != null) {
-            Log.d(TAG, "Saving " + mOpenFileId);
-
-            String fileName = mFileTitleEditText.getText().toString();
-            String fileContent = mDocContentEditText.getText().toString();
-
-            mDriveServiceHelper.saveFile(mOpenFileId, fileName, fileContent)
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Unable to save file via REST.", exception));
-        }
-    }
-
-    /**
-     * Queries the Drive REST API for files visible to this app and lists them in the content view.
-     */
-    private void query() {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Querying for files.");
-
-            mDriveServiceHelper.queryFiles()
-                    .addOnSuccessListener(fileList -> {
-                        StringBuilder builder = new StringBuilder();
-                        for (File file : fileList.getFiles()) {
-                            builder.append(file.getName()).append("\n");
-                        }
-                        String fileNames = builder.toString();
-
-                        mFileTitleEditText.setText("File List");
-                        mDocContentEditText.setText(fileNames);
-
-                        setReadOnlyMode();
-                    })
-                    .addOnFailureListener(exception -> Log.e(TAG, "Unable to query files.", exception));
-        }
-    }
-
-    /**
-     * Updates the UI to read-only mode.
-     */
-    private void setReadOnlyMode() {
-        mFileTitleEditText.setEnabled(false);
-        mDocContentEditText.setEnabled(false);
-        mOpenFileId = null;
-    }
-
-    /**
-     * Updates the UI to read/write mode on the document identified by {@code fileId}.
-     */
-    private void setReadWriteMode(String fileId) {
-        mFileTitleEditText.setEnabled(true);
-        mDocContentEditText.setEnabled(true);
-        mOpenFileId = fileId;
     }
 
 }

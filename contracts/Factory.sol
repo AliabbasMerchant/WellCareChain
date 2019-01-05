@@ -1,13 +1,12 @@
 pragma solidity ^0.4.23;
 //pragma experimental ABIEncoderV2;
 
-import "./Ownable.sol";
-import "./SafeMath.sol";
+// import "./SafeMath.sol";
 
-contract Factory is Ownable {
-    using SafeMath for uint256;
-    using SafeMath for uint16;
-    using SafeMath for uint8;
+contract Factory{
+    // using SafeMath for uint256;
+    // using SafeMath for uint16;
+    // using SafeMath for uint8;
 
     //    TODO
     event NewDoctor();
