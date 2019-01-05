@@ -104,6 +104,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_width="380dp"
                 android:layout_height="1dp"
+
                 android:background="#AAA"/>
 
         </LinearLayout>
@@ -125,6 +126,7 @@
             <TextView
                 android:id="@+id/textV-iew7"
                 android:textSize="19dp"
+                android:layout_marginTop="10dp"
                 android:textColor="#000"
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
@@ -159,6 +161,7 @@
                 android:id="@+id/textV3iew7"
                 android:textSize="19dp"
                 android:textColor="#000"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -193,17 +196,10 @@
                 android:textSize="19dp"
                 android:textColor="#000"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="  O +" />
-
-            <View
-                android:id="@+id/view2"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_width="380dp"
-                android:layout_height="1dp"
-                android:background="#AAA"/>
 
         </LinearLayout>
 

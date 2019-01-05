@@ -173,11 +173,13 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             Log.i(MYTAG,"Edit Menu");
             changeFragment(0);
+            
 
         } else if (id == R.id.nav_pathalogy) {
 
             Log.i(MYTAG,"Pathalogy");
             changeFragment(1);
+
         } else if (id == R.id.nav_chemist) {
             Log.i(MYTAG,"Chemist");
             changeFragment(2);
