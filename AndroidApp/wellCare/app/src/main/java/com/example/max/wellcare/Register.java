@@ -23,14 +23,17 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Collections;
 
 public class Register extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
-
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private String name, emailAddress, folderId, presFolderId, infoFolderId, reportsFolderId, docRepFolderId;
+    private long patientId;
     private DriveServiceHelper mDriveServiceHelper;
 
     @Override
@@ -40,6 +43,11 @@ public class Register extends AppCompatActivity {
 
         findViewById(R.id.registerButton).setOnClickListener(view -> register());
         requestSignIn();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Please Register!", Toast.LENGTH_SHORT).show();
     }
 
     private void register() {
@@ -91,9 +99,32 @@ public class Register extends AppCompatActivity {
             reportsFolderId = pref.getString("reportsFolderId", "root");
             docRepFolderId = pref.getString("docRepFolderId", "root");
             registerOnBlockchain();
+            editor.putBoolean("registered", true);
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
         }
     }
     private void registerOnBlockchain() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        String driveURL = "https://drive.google.com/open?id=" + folderId;
+        String presURL = "https://drive.google.com/open?id=" + presFolderId;
+        String infoURL = "https://drive.google.com/open?id=" + infoFolderId;
+        String reportsURL = "https://drive.google.com/open?id=" + reportsFolderId;
+        JSONObject credentials = BlockchainHelper.generateCredentials();
+        try {
+            String sPrivateKeyInHex = credentials.getString("address");
+            String sAddress = credentials.getString("privateKey");
+            BlockchainHelper.sPrivateKeyInHex = sPrivateKeyInHex;
+            BlockchainHelper.sAddress = sAddress;
+            patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
+            editor.putLong("patientId", patientId);
+            editor.putString("address", sAddress);
+            editor.putString("privateKey", sPrivateKeyInHex);
+            editor.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

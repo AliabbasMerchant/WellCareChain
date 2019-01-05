@@ -4,8 +4,11 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.support.v4.util.Pair;
+import android.util.Log;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.batch.BatchRequest;
@@ -88,6 +91,19 @@ public class DriveServiceHelper {
             return permission.getId();
         });
     }
+    public void giveWriteAccessFor5Minutes(String fileId, String emailId) {
+        createPermission(fileId, emailId, "write")
+            .addOnSuccessListener(permissionId -> {
+                Log.e("DriveServiceHelper", "giveWriteAccessFor5Minutes");
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    removePermission(fileId, permissionId);
+                    Log.e("DriveServiceHelper", "Permission Revoked");
+                }, 2*60*1000);
+            })
+            .addOnFailureListener(exception -> {});
+    }
+
 
 //    /**
 //     * Opens the file identified by {@code fileId} and returns a {@link Pair} of its name and
