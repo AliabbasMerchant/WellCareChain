@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+	  <title>Chemist</title>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	  <link rel="stylesheet" href="../css/lab.css">
+	  <script type="text/javascript" src="../js/jquery.min.js"></script>
+	  <script type="text/javascript" src="../js/qrcode.js"></script>
+	  <script type="text/javascript" src='../js/lab.js'></script>
+	</head>
+	<body>
+		
+		<nav class="navbar navbar-inverse">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <a class="navbar-brand" href="home.html">WellCare Chain</a>
+			</div>
+			<ul class="nav navbar-nav">
+		  <li><a href="doctors.html">Doctors</a></li>
+		  <li ><a href="chemist.html">Chemist</a></li>
+		  <li class="active"><a href="lab.html">Lab</a></li>
+		  <li><a href="pathology.html">Pathology</a></li>
+		</ul>
+			<ul>
+			</ul>
+		  </div>
+		</nav>
+		
+		<div id='doc-form' >
+			<div class="container">
+			<h2 style='text-align:center'>Register</h2>
+			<form class="form-horizontal" action="/action_page.php">
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">Name:</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="name" placeholder="Enter Name" name="name">
+			  </div>
+			</div>
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="email">Email:</label>
+			  <div class="col-sm-10">
+				<input type="email" class="form-control" id="doc-email" placeholder="Enter Email" name="email">
+			  </div>
+			</div>
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">License Number:</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="lic_no" placeholder="Enter License Number" name="lic_no">
+			  </div>
+			</div>
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">Details:</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="det" placeholder="Enter Details" name="det">
+			  </div>
+			</div>
+			
+			<button type="button" class="btn btn-primary" id='sub'>Submit</button>
+			
+			</form>
+		</div>
+		</div>
+		
+		<div id='lab_info' >
+			<div class="container">
+			<h2 style='text-align:center'>Request Data From Patients</h2>
+			<form class="form-horizontal" action="/action_page.php">
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">Message:</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="msg" placeholder="Enter Message" name="msg">
+			  </div>
+			</div>
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">Number of Sample:</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="nos" placeholder="Enter Number of Sample" name="nos">
+			  </div>
+			</div>
+			
+			<div class="form-group">
+			  <label class="control-label col-sm-2" for="usr">Total Bounty (in wei):</label>
+			  <div class="col-sm-10">
+				<input type="text" class="form-control" id="tb" placeholder="Enter Total Bounty" name="tb">
+			  </div>
+			</div>
+			
+			<button type="button" class="btn btn-primary" id='sub'>Submit</button>
+			
+			</form>
+		</div>
+		</div>
+</div>
+	<script type='text/javascript'> makeCode1();</script>
+	</body>
+</html>
