@@ -21,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".QR_Reader_Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_qr__reader_"
+            android:theme="@style/FullscreenTheme"></activity>
+
+
         <activity android:name=".Register"></activity>
     </application>
 

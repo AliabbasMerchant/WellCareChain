@@ -16,4 +16,8 @@
     <string name="chemistScanText">Chemist : Scan QR Code</string>
     <string name="pathalogyScanText">Pathalogy : Scan QR Code</string>
     <string name="doctorScanText">Doctor : Scan QR Code</string>
+
+    <string name="title_activity_qr__reader_">QR_Reader_Activity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
