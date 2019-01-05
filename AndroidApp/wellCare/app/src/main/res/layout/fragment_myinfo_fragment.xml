@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
-                android:text="Derek Parker"
+                android:text="Tom Cruise"
                 android:textColor="#000"
 
                 android:textSize="25dp" />
@@ -70,7 +70,7 @@
                 android:textSize="19dp"
                 android:textColor="#555"
                 android:layout_marginBottom="30dp"
-                android:text="June 6 , 1999 (19 years old)" />
+                android:text="July 3 , 1962 (57 years old)" />
         </LinearLayout>
 
         <LinearLayout
@@ -95,7 +95,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hyper Tension" />
+                android:text="Too Much Savage" />
 
             <View
                 android:id="@+id/vie9w2"
@@ -131,7 +131,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Taking 4,000 IU Vitamin D daily." />
+                android:text="Guns" />
 
             <View
                 android:id="@+id/v1iew2"
@@ -165,7 +165,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Peanuts" />
+                android:text="Bombs" />
 
             <View
                 android:id="@+id/v4ew2"
