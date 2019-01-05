@@ -1,13 +1,12 @@
 pragma solidity ^0.4.23;
 //pragma experimental ABIEncoderV2;
 
-import "./Ownable.sol";
-import "./SafeMath.sol";
+// import "./SafeMath.sol";
 
-contract Factory is Ownable {
-    using SafeMath for uint256;
-    using SafeMath for uint16;
-    using SafeMath for uint8;
+contract Factory{
+    // using SafeMath for uint256;
+    // using SafeMath for uint16;
+    // using SafeMath for uint8;
 
     //    TODO
     event NewDoctor();
@@ -89,38 +88,55 @@ contract Factory is Ownable {
     DataRequirement[] public dataRequirements;
     Data[] public data;
 
-    function newPatient(string _name, string _email, string _driveURL, string _presURL, string _infoURL, string _reportsURL) public
+    function newPatient(string _name, string _email, string _driveURL, string _presURL, string _infoURL, string _reportsURL) public returns(uint)
     {
         //        TODO FW: msg.sender must not already registered
-        patients.push(Patient(_name, msg.sender, _email, _driveURL, _presURL, _infoURL, _reportsURL, true)) - 1;
+		uint patientId = patients.push(Patient(_name, msg.sender, _email, _driveURL, _presURL, _infoURL, _reportsURL, true)) - 1;
         noOfPatients++;
+		return patientId;
     }
 
     function newDoctor(string _name, string _email, string _license, string _physicalAdd, string _specialization) public
     {
         //        TODO FW: msg.sender must not already registered
-        doctors.push(Doctor(_name, msg.sender, _email, _license, _physicalAdd, _specialization)) - 1;
+        doctors.push(Doctor(_name, msg.sender, _email, _license, _physicalAdd, _specialization));
         noOfDoctors++;
     }
 
     function newChemist(string _name, string _email, string _license, string _physicalAdd) public
     {
         //        TODO FW: msg.sender must not already registered
-        chemists.push(Chemist(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
+        chemists.push(Chemist(_name, msg.sender, _email, _license, _physicalAdd));
         noOfChemists++;
     }
 
     function newLab(string _name, string _email, string _license, string _details) public
     {
         //        TODO FW: msg.sender must not already registered
-        labs.push(Lab(_name, msg.sender, _email, _license, _details)) - 1;
+        labs.push(Lab(_name, msg.sender, _email, _license, _details));
         noOfLabs++;
     }
 
     function newPathology(string _name, string _email, string _license, string _physicalAdd) public
     {
         //        TODO FW: msg.sender must not already registered
-        pathologies.push(Pathology(_name, msg.sender, _email, _license, _physicalAdd)) - 1;
+        pathologies.push(Pathology(_name, msg.sender, _email, _license, _physicalAdd));
         noOfPathologies++;
     }
+	function getChemistEmail(uint chemistId) public view returns(string)
+	{
+		return chemists[chemistId].email;
+	}
+	function getDoctorEmail(uint doctorId) public view returns(string)
+	{
+		return doctors[doctorId].email;
+	}
+	function getPathologyEmail(uint pathologyId) public view returns(string)
+	{
+		return pathologies[pathologyId].email;
+	}
+	function getLabEmail(uint labId) public view returns(string)
+	{
+		return labs[labId].email;
+	}
 }

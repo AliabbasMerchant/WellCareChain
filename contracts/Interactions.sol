@@ -1,11 +1,11 @@
 pragma solidity ^0.4.23;
-pragma experimental ABIEncoderV2;
+// pragma experimental ABIEncoderV2;
 
 import "./Factory.sol";
-import "./SafeMath.sol";
+// import "./SafeMath.sol";
 
 contract Interactions is Factory {
-    using SafeMath for uint256;
+    // using SafeMath for uint256;
 
     event newDataRequirement(string message, uint labId, uint bountyForEach);
 
@@ -83,11 +83,13 @@ contract Interactions is Factory {
     }
 
     function alertDataRequirement(string _message, uint _number) public payable senderIsLab {
-        require(msg.value > _number * 100);
+        require(msg.value > _number * 100, "Too less wei provided");
         uint _labId = uint(getLabId(msg.sender));
-        dataRequirements.push(DataRequirement(_message, _labId, uint(msg.value.div(_number)), _number, 0)) - 1;
+        // dataRequirements.push(DataRequirement(_message, _labId, uint(msg.value.div(_number)), _number, 0)) - 1;
+        dataRequirements.push(DataRequirement(_message, _labId, uint(msg.value/_number), _number, 0)) - 1;
         noOfDataRequirements++;
-        emit newDataRequirement(_message, _labId, uint(msg.value.div(_number)));
+        // emit newDataRequirement(_message, _labId, uint(msg.value.div(_number)));
+        emit newDataRequirement(_message, _labId, uint(msg.value/_number));
     }
 
     function getBounty(uint _requirementId, string _url) public senderIsPatient {
@@ -105,17 +107,17 @@ contract Interactions is Factory {
         msg.sender.transfer(dataRequirements[_requirementId].bountyForEach);
     }
 
-    function accessData(uint _requirementId) public view senderIsLab returns(Data[] memory ans){
-        uint _labId = uint(getLabId(msg.sender));
-        require(dataRequirements[_requirementId].labId == _labId, "You cannot access this data");
-        uint no = dataRequirements[_requirementId].gotData;
-        ans = new Data[](no);
-        for (uint i = 0; i < noOfData; i++) {
-            if (data[i].requirementId == _requirementId) {
-                ans[i] = data[i];
-            }
-        }
-        return ans;
-    }
+//    function accessData(uint _requirementId) public view senderIsLab returns(Data[] memory ans){
+//        uint _labId = uint(getLabId(msg.sender));
+//        require(dataRequirements[_requirementId].labId == _labId, "You cannot access this data");
+//        uint no = dataRequirements[_requirementId].gotData;
+//        ans = new Data[](no);
+//        for (uint i = 0; i < noOfData; i++) {
+//            if (data[i].requirementId == _requirementId) {
+//                ans[i] = data[i];
+//            }
+//        }
+//        return ans;
+//    }
 //  TODO Supply chain
 }
