@@ -17064,12 +17064,12 @@
         }
       },
       "links": {},
-      "address": "0xe3A2B09eBeAF360b57D688364b70D27Fc93df78B",
-      "transactionHash": "0x82b4446ef71060f480d703437be1e5c29799e263549ef2a6d31f106a9f9958b3"
+      "address": "0xa7F05d4e8ebf448149F38C8614Ab64dd1191f6C1",
+      "transactionHash": "0xe946355c446a0d561c1fdfc60e5f57f94fdf841f8c8ad275c0f9321c1d41f4b2"
     }
   },
   "schemaVersion": "3.0.0",
-  "updatedAt": "2019-01-05T16:31:10.935Z",
+  "updatedAt": "2019-01-05T20:30:33.407Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

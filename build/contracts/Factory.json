@@ -9714,7 +9714,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.0",
-  "updatedAt": "2019-01-05T16:31:09.867Z",
+  "updatedAt": "2019-01-05T20:30:32.151Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
