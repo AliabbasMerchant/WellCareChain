@@ -1,19 +1,3 @@
-function makeCode(){		
-	var qrcode = new QRCode(document.getElementById("qrcode2"), {
-	width : 100,
-	height : 100
-	});
-	qrcode.makeCode(document.getElementById("amount").value);
-}
-
-function makeCode1(){		
-	var qrcode = new QRCode(document.getElementById("qrcode1"), {
-	width : 100,
-	height : 100
-	});
-	qrcode.makeCode("divy9881@gmail.com");
-}
-
 App = {
   web3Provider: null,
   contracts: {},
@@ -25,16 +9,16 @@ App = {
     if (typeof web3 !== 'undefined') {
       App.web3Provider = web3.currentProvider;
     } else {
-      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
     }
     web3 = new Web3(App.web3Provider);
     return await App.initContract();
   },
   initContract: async function() {
     var a = false;
-    $.getJSON("WellCareToken.json", function(wellCareToken) {
-      App.contracts.WellCareToken = TruffleContract(wellCareToken);
-      App.contracts.WellCareToken.setProvider(App.web3Provider);
+    $.getJSON("EstateToken.json", function(estateToken) {
+      App.contracts.EstateToken = TruffleContract(estateToken);
+      App.contracts.EstateToken.setProvider(App.web3Provider);
       return App.render();
     });
   },

@@ -1,19 +1,3 @@
-function makeCode(){		
-	var qrcode = new QRCode(document.getElementById("qrcode2"), {
-	width : 100,
-	height : 100
-	});
-	qrcode.makeCode(document.getElementById("amount").value);
-}
-
-function makeCode1(){		
-	var qrcode = new QRCode(document.getElementById("qrcode1"), {
-	width : 100,
-	height : 100
-	});
-	qrcode.makeCode("divy9881@gmail.com");
-}
-
 App = {
   web3Provider: null,
   contracts: {},
@@ -21,6 +5,7 @@ App = {
   init: async function() {
     return await App.initWeb3();
   },
+  
   initWeb3: async function() {
     if (typeof web3 !== 'undefined') {
       App.web3Provider = web3.currentProvider;
@@ -30,9 +15,10 @@ App = {
     web3 = new Web3(App.web3Provider);
     return await App.initContract();
   },
+  
   initContract: async function() {
     var a = false;
-    $.getJSON("WellCareToken.json", function(wellCareToken) {
+    $.getJSON("Interactions.json", function(wellCareToken) {
       App.contracts.WellCareToken = TruffleContract(wellCareToken);
       App.contracts.WellCareToken.setProvider(App.web3Provider);
       return App.render();
@@ -56,7 +42,7 @@ App = {
         App.account = account;
       }
     });
-    var instance = await App.contracts.EstateToken.deployed();
+    var instance = await App.contracts.WellCareToken.deployed();
     var noOfTokens = await instance.noOfTokens();
     noOfTokens = noOfTokens.toNumber();
     var tokenListDiv = $("#container1");
@@ -82,7 +68,7 @@ App = {
   buy: function(_tokenId) {
     console.log("buy " + _tokenId);
     var inst;
-    App.contracts.EstateToken.deployed().then(function(_instance) {
+    App.contracts.WellCareToken.deployed().then(function(_instance) {
         inst = _instance;
         return _instance.tokens(_tokenId);
     }).then(function(token) {
