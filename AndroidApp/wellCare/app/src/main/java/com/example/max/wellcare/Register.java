@@ -13,9 +13,12 @@ import com.google.api.services.drive.model.File;
 import com.google.common.collect.ImmutableSet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
 import java.util.Collections;
 
 public class Register extends AppCompatActivity {
@@ -33,7 +37,7 @@ public class Register extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private String name, emailAddress, folderId, presFolderId, infoFolderId, reportsFolderId, docRepFolderId;
-    private long patientId;
+    private BigInteger patientId;
     private DriveServiceHelper mDriveServiceHelper;
 
     @Override
@@ -117,8 +121,16 @@ public class Register extends AppCompatActivity {
             String sAddress = credentials.getString("privateKey");
             BlockchainHelper.sPrivateKeyInHex = sPrivateKeyInHex;
             BlockchainHelper.sAddress = sAddress;
+
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            builder.setTitle("Transfer Ether")
+                .setMessage("Please Transfer Ether To Your WellCareChain Account: " + sAddress)
+                .setPositiveButton("Ok, I have transferred ether to my account", (dialog, which) -> { })
+                .show();
+
             patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
-            editor.putLong("patientId", patientId);
+            editor.putString("patientId", patientId.toString());
             editor.putString("address", sAddress);
             editor.putString("privateKey", sPrivateKeyInHex);
             editor.commit();

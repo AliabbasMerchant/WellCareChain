@@ -1,4 +1,4 @@
-var WellCareChain = artifacts.require("./Interactions.sol");
+var WellCareChain = artifacts.require("./WellCareChain.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(WellCareChain);
