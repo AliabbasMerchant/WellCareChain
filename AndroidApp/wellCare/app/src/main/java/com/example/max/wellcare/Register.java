@@ -114,9 +114,6 @@ public class Register extends AppCompatActivity {
             reportsFolderId = pref.getString("reportsFolderId", "root");
             docRepFolderId = pref.getString("docRepFolderId", "root");
             registerOnBlockchain();
-            editor.putBoolean("registered", true);
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
         } else {
             Log.e(TAG, "register: Drive service helper is null");
         }
@@ -142,12 +139,18 @@ public class Register extends AppCompatActivity {
         String sAddress = "c893fcb1aebc239df920cac5508b7cd37e35160c";
         BlockchainHelper.sAddress = sAddress;
 
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        builder.setTitle("Transfer Ether")
-            .setMessage("Please Transfer Ether To Your WellCareChain Account: " + sAddress)
-            .setPositiveButton("Ok, I have transferred ether to my account", (dialog, which) -> { })
-            .show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        alertDialogBuilder.setTitle("Transfer Ether");
+        alertDialogBuilder
+                .setMessage("Please Transfer Ether To Your WellCareChain Account: " + sAddress)
+//                .setCancelable(false)
+                .setPositiveButton("Ok, I have transferred ether to my account", (dialog, id) -> {
+                    dialog.cancel();
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        Log.e(TAG, "registerOnBlockchain: address = "+sAddress);
         Thread thread = new Thread(() -> {
             try  {
                 patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
@@ -155,6 +158,9 @@ public class Register extends AppCompatActivity {
                 editor.putString("address", sAddress);
                 editor.commit();
                 Log.e(TAG, "registerOnBlockchain: done");
+                editor.putBoolean("registered", true);
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
             } catch (Exception e) {
                 Log.e(TAG, "registerOnBlockchain: ", e);
                 e.printStackTrace();
