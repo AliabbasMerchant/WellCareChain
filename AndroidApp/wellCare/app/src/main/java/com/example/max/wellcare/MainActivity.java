@@ -117,6 +117,26 @@ public class MainActivity extends AppCompatActivity
                     ft.commit();
                     isFragmentChanged=true;
                     break;
+                case 4:
+                    fragment = new service_Lab();
+                    fm = getFragmentManager();
+                    ft = fm.beginTransaction();
+                    ft.addToBackStack("4");
+                    ft.replace(R.id.masterFragment_place,fragment);
+                    ft.commit();
+                    isFragmentChanged=true;
+                    break;
+                case 5:
+                    fragment = new service_Emergency();
+                    fm = getFragmentManager();
+                    ft = fm.beginTransaction();
+                    ft.addToBackStack("5");
+
+                    ft.replace(R.id.masterFragment_place,fragment);
+
+                    ft.commit();
+                    isFragmentChanged=true;
+                    break;
 
                 default:
 
@@ -186,11 +206,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_doctor) {
             Log.i(MYTAG,"Doctor");
             changeFragment(3);
-        } else if (id == R.id.nav_share) {
-            Log.i(MYTAG,"Share");
+        } else if (id == R.id.nav_lab) {
+            Log.i(MYTAG,"Lab");
             changeFragment(4);
-        } else if (id == R.id.nav_send) {
-            Log.i(MYTAG,"Send");
+        } else if (id == R.id.nav_emergency) {
+            Log.i(MYTAG,"Emergency");
             changeFragment(5);
         }
 

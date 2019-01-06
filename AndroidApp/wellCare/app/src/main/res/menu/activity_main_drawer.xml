@@ -8,7 +8,6 @@
             android:id="@+id/nav_edit"
             android:icon="@drawable/ic_menu_camera"
             android:title="Edit Info" />
-
         <item android:title="Services">
             <menu>
                 <item
@@ -23,21 +22,29 @@
                     android:id="@+id/nav_doctor"
                     android:icon="@drawable/ic_menu_manage"
                     android:title="Doctor" />
+                <item
+                    android:id="@+id/nav_lab"
+                    android:icon="@drawable/ic_menu_share"
+                    android:title="Lab" />
+                <item
+                    android:id="@+id/nav_emergency"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="Emergency Info" />
             </menu>
         </item>
     </group>
 
-    <item android:title="Social">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+    <!--<item android:title="Social">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>

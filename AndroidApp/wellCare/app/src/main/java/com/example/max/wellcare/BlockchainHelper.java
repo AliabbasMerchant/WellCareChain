@@ -30,9 +30,9 @@ import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 import static org.web3j.tx.Transfer.GAS_LIMIT;
 
 class BlockchainHelper {
-    static String sPrivateKeyInHex, sAddress;
-    private static String URL = "https://rinkeby.infura.io/<your token>";
-    private static String ContractAddress = "0x";
+    static String sAddress;
+    private static String URL = "http://192.168.43.23:8545";
+    private static String ContractAddress = "0x0x3D18a44b8609f1f5e4aD4235cBb8d9DE0Ea725d2";
     private static final String TAG = "BlockchainHelper";
     static BigInteger register(String _name, String _email, String _driveURL, String _presURL, String _infoURL, String _reportsURL) {
 //        Web3j web3j = Web3jFactory.build(new HttpService(URL));
@@ -40,23 +40,37 @@ class BlockchainHelper {
         BigInteger patientId = new BigInteger("-1");
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+            Credentials credentials = getCredentials();
+            logger("Credentials loaded");
+            WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+            try {
+                contract.newPatient(_name, _email, _driveURL, _presURL, _infoURL, _reportsURL).send();
+                patientId = contract.noOfPatients().send();
+                patientId = patientId.subtract(BigInteger.ONE);
+            } catch (Exception e) {
+                Log.e(TAG, "register: error", e);
+                e.printStackTrace();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        logger("Credentials loaded");
-        WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
-        try {
-            contract.newPatient(_name, _email, _driveURL, _presURL, _infoURL, _reportsURL).send();
-            patientId = contract.noOfPatients().send();
-            patientId = patientId.subtract(BigInteger.ONE);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "register: error connecting to eth client", e);
         }
         return patientId;
     }
     private static void logger(String msg) {
         Log.e(TAG, "logger: " + msg);
+    }
+
+    static Credentials getCredentials() {
+        Credentials credentials = null;
+        try {
+            credentials = WalletUtils.loadCredentials(
+                    "aliabbas",
+                    "Cred.json");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return credentials;
     }
 //    static void function() throws Exception{
 //        logger("Sending 1 Wei ("
@@ -98,33 +112,33 @@ class BlockchainHelper {
 //                    + ", new value: " + Numeric.toHexString(event.newGreetingIdx));
 //        }
 //    }
-
-    static JSONObject generateCredentials() {
-        String seed = UUID.randomUUID().toString();
-        JSONObject processJson = new JSONObject();
-        try {
-            ECKeyPair ecKeyPair = createEcKeyPair();
-            BigInteger privateKeyInDec = ecKeyPair.getPrivateKey();
-            sPrivateKeyInHex = privateKeyInDec.toString(16);
-            WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
-            sAddress = aWallet.getAddress();
-            processJson.put("address", "0x" + sAddress);
-            processJson.put("privateKey", sPrivateKeyInHex);
-        } catch (Exception e) {
-            Log.e(TAG, "generateCredentials: ", e);
-        }
-        return processJson;
-    }
-    static Credentials getCredentials (String privateKeyInHex){
-        BigInteger privateKeyInBT = new BigInteger(privateKeyInHex, 16);
-        ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
-        return Credentials.create(aPair);
-    }
+//    static JSONObject generateCredentials() {
+//        String seed = UUID.randomUUID().toString();
+//        JSONObject processJson = new JSONObject();
+//        try {
+//            ECKeyPair ecKeyPair = createEcKeyPair();
+//            BigInteger privateKeyInDec = ecKeyPair.getPrivateKey();
+//            sPrivateKeyInHex = privateKeyInDec.toString(16);
+//            WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
+//            sAddress = aWallet.getAddress();
+//            processJson.put("address", "0x" + sAddress);
+//            processJson.put("privateKey", sPrivateKeyInHex);
+//        } catch (Exception e) {
+//            Log.e(TAG, "generateCredentials: ", e);
+//        }
+//        return processJson;
+//    }
+//    static Credentials getCredentials (String privateKeyInHex){
+//        BigInteger privateKeyInBT = new BigInteger(privateKeyInHex, 16);
+//        ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
+//        return Credentials.create(aPair);
+//    }
 //    static String getChemistDetails(long chemistId) {
 ////         TODO
 //        String name="", add="", email="", license="", physicalAdd="";
 //        return "Name: " + name + "\nEmail Address: " + email + "\nLicense: " + license + "\nAddress: " + physicalAdd;
 //    }
+
     static void payToDoctor(BigInteger patientId, BigInteger doctorId, BigInteger fees) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
@@ -132,7 +146,8 @@ class BlockchainHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -149,7 +164,8 @@ class BlockchainHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -166,7 +182,8 @@ class BlockchainHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -183,7 +200,8 @@ class BlockchainHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -201,7 +219,8 @@ class BlockchainHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Credentials credentials = getCredentials(sPrivateKeyInHex);
+//        Credentials credentials = getCredentials(sPrivateKeyInHex);
+        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {

@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,25 +65,6 @@ public class Register extends AppCompatActivity {
     }
 
     public void register(View v) {
-        try {
-            FileOutputStream fOut = openFileOutput("samplefile.txt",
-                    MODE_PRIVATE);
-            OutputStreamWriter osw = new OutputStreamWriter(fOut);
-            osw.write("yo");
-            osw.flush();
-            osw.close();
-            Log.e(TAG, "register: file written");
-            FileInputStream fIn = openFileInput("samplefile.txt");
-            InputStreamReader isr = new InputStreamReader(fIn);
-            char[] inputBuffer = new char["yo".length()];
-            isr.read(inputBuffer);
-            String readString = new String(inputBuffer);
-            boolean isTheSame = "yo".equals(readString);
-            Log.e("File Reading stuff", "success = " + isTheSame);
-        } catch (IOException e) {
-            Log.e(TAG, "register: Error");
-            e.printStackTrace();
-        }
         if (mDriveServiceHelper != null) {
             Log.e(TAG, "Registering...");
             Toast.makeText(this, "Registering...", Toast.LENGTH_SHORT).show();
@@ -146,29 +129,38 @@ public class Register extends AppCompatActivity {
         String presURL = "https://drive.google.com/open?id=" + presFolderId;
         String infoURL = "https://drive.google.com/open?id=" + infoFolderId;
         String reportsURL = "https://drive.google.com/open?id=" + reportsFolderId;
-        JSONObject credentials = BlockchainHelper.generateCredentials();
         try {
-            String sPrivateKeyInHex = credentials.getString("address");
-            String sAddress = credentials.getString("privateKey");
-            BlockchainHelper.sPrivateKeyInHex = sPrivateKeyInHex;
-            BlockchainHelper.sAddress = sAddress;
-
-            AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-            builder.setTitle("Transfer Ether")
-                .setMessage("Please Transfer Ether To Your WellCareChain Account: " + sAddress)
-                .setPositiveButton("Ok, I have transferred ether to my account", (dialog, which) -> { })
-                .show();
-
-            patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
-            editor.putString("patientId", patientId.toString());
-            editor.putString("address", sAddress);
-            editor.putString("privateKey", sPrivateKeyInHex);
-            editor.commit();
-        } catch (JSONException e) {
+            FileOutputStream fOut = openFileOutput("Cred.json", MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            osw.write("{\"address\":\"c893fcb1aebc239df920cac5508b7cd37e35160c\",\"id\":\"1f131cbb-e14b-4e47-8510-41c04d046e91\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"ciphertext\":\"47f672ae8a775c68a76c8841b36301c0147d64813fc3e2663a8743ada8a1eee1\",\"cipherparams\":{\"iv\":\"a13f78cdc41e7158a10eaf0784467113\"},\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":262144,\"p\":1,\"r\":8,\"salt\":\"84057fb36965bcd07a17eec4e2509a8161b6c26332ae3aee7ec595854635df2c\"},\"mac\":\"2da49e157f3bc251e5f075b5e9440c32860a305c1f7f514021e456bff79d4cb3\"}}");
+            osw.close();
+            Log.e(TAG, "register: credentials file written");
+        } catch (IOException e) {
+            Log.e(TAG, "register: Error");
             e.printStackTrace();
         }
-        Log.e(TAG, "registerOnBlockchain: done");
+        String sAddress = "c893fcb1aebc239df920cac5508b7cd37e35160c";
+        BlockchainHelper.sAddress = sAddress;
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        builder.setTitle("Transfer Ether")
+            .setMessage("Please Transfer Ether To Your WellCareChain Account: " + sAddress)
+            .setPositiveButton("Ok, I have transferred ether to my account", (dialog, which) -> { })
+            .show();
+        Thread thread = new Thread(() -> {
+            try  {
+                patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
+                editor.putString("patientId", patientId.toString());
+                editor.putString("address", sAddress);
+                editor.commit();
+                Log.e(TAG, "registerOnBlockchain: done");
+            } catch (Exception e) {
+                Log.e(TAG, "registerOnBlockchain: ", e);
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     @Override

@@ -123,10 +123,14 @@ public class service_Chemist extends Fragment{
                 BigInteger fees = new BigInteger(payQR.substring(payQR.indexOf(',')+1));
                 String _patientId = sp.getString("patientId", "0");
                 BigInteger patientId = new BigInteger(_patientId);
-                BlockchainHelper.payToChemist(patientId, chemistId, fees);
-                Toast.makeText(getContext(), "Paid the Chemist!", Toast.LENGTH_SHORT).show();
-                view.findViewById(R.id.button_pay).setEnabled(false);
-                view.findViewById(R.id.button_allowAccess).setEnabled(false);
+
+                Thread thread = new Thread(() -> {
+                    BlockchainHelper.payToChemist(patientId, chemistId, fees);
+                    Toast.makeText(getContext(), "Paid the Chemist!", Toast.LENGTH_SHORT).show();
+                    view.findViewById(R.id.button_pay).setEnabled(false);
+                    view.findViewById(R.id.button_allowAccess).setEnabled(false);
+                });
+                thread.start();
             }
         });
         return view;

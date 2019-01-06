@@ -73,27 +73,25 @@ public class service_Doctor extends Fragment {
         scannedData = (TextView) view.findViewById(R.id.extraData);
 
         scanButton = (Button) view.findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scanQR(v, SCAN_REQUEST_CODE);
-            }
-        });
+        scanButton.setOnClickListener(v -> scanQR(v, SCAN_REQUEST_CODE));
 
         SharedPreferences sp = this.getActivity().getSharedPreferences("MyPref", 0); // 0 - for private mode
         allowAccessButton = view.findViewById(R.id.button_allowAccess);
         allowAccessButton.setOnClickListener(v -> {
             BigInteger docId = new BigInteger(qrText.substring(0, qrText.indexOf(',')));
-            String doctorEmail = BlockchainHelper.getDoctorEmail(docId);
-            String folderId = sp.getString("folderId", "");
-            Gson gson = new Gson();
-            String json = sp.getString("googleDriveService", "");
-            Drive googleDriveService = gson.fromJson(json, Drive.class);
-            DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-            mDriveServiceHelper.createPermission(folderId, doctorEmail, "writer")
-                .addOnSuccessListener(id -> permissionId = id)
-                .addOnFailureListener(exception ->
-                        Log.e(TAG, "Couldn't allow access.", exception));
+            Thread thread = new Thread(() -> {
+                String doctorEmail = BlockchainHelper.getDoctorEmail(docId);
+                String folderId = sp.getString("folderId", "");
+                Gson gson = new Gson();
+                String json = sp.getString("googleDriveService", "");
+                Drive googleDriveService = gson.fromJson(json, Drive.class);
+                DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                mDriveServiceHelper.createPermission(folderId, doctorEmail, "writer")
+                        .addOnSuccessListener(id -> permissionId = id)
+                        .addOnFailureListener(exception ->
+                                Log.e(TAG, "Couldn't allow access.", exception));
+            });
+            thread.start();
         });
         payButton = view.findViewById(R.id.button_pay);
         payButton.setOnClickListener(v -> {
@@ -111,10 +109,14 @@ public class service_Doctor extends Fragment {
                 BigInteger docId = new BigInteger(qrText.substring(0, qrText.indexOf(',')));
                 BigInteger fees = new BigInteger(qrText.substring(qrText.indexOf(',') + 1));
                 BigInteger patientId = new BigInteger(sp.getString("patientId", "0"));
-                BlockchainHelper.payToDoctor(patientId, docId, fees);
-                Toast.makeText(getContext(), "Paid the Doctor!", Toast.LENGTH_SHORT).show();
-                view.findViewById(R.id.button_pay).setEnabled(false);
-                view.findViewById(R.id.button_allowAccess).setEnabled(false);
+
+                Thread thread = new Thread(() -> {
+                    BlockchainHelper.payToDoctor(patientId, docId, fees);
+                    Toast.makeText(getContext(), "Paid the Doctor!", Toast.LENGTH_SHORT).show();
+                    view.findViewById(R.id.button_pay).setEnabled(false);
+                    view.findViewById(R.id.button_allowAccess).setEnabled(false);
+                });
+                thread.start();
             }
         });
         return view;

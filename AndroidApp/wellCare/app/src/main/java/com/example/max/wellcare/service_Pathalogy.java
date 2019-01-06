@@ -80,21 +80,21 @@ public class service_Pathalogy extends Fragment {
             String msg = qrText.substring(0, qrText.indexOf(','));
             BigInteger pathologyId = new BigInteger(qrText.substring(qrText.indexOf(',')+1, qrText.lastIndexOf(',')));
             BigInteger fees = new BigInteger(qrText.substring(qrText.lastIndexOf(',') + 1));
-            String pathologyEmail = BlockchainHelper.getPathologyEmail(pathologyId);
-            String reportsFolderId = sp.getString("reportsFolderId", "");
-            String _patientId = sp.getString("patientId", "0");
-            BigInteger patientId = new BigInteger(_patientId);
-
-            Gson gson = new Gson();
-            String json = sp.getString("googleDriveService", "");
-            Drive googleDriveService = gson.fromJson(json, Drive.class);
-            DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-
-            mDriveServiceHelper.giveWriteAccessForXMillis(reportsFolderId, pathologyEmail, 2*60*1000);
-
-            BlockchainHelper.payToPathology(patientId, pathologyId, fees, msg);
-            Toast.makeText(getContext(), "Paid the Pathology!", Toast.LENGTH_SHORT).show();
-            view.findViewById(R.id.button_pay).setEnabled(false);
+            Thread thread = new Thread(() -> {
+                String pathologyEmail = BlockchainHelper.getPathologyEmail(pathologyId);
+                String reportsFolderId = sp.getString("reportsFolderId", "");
+                String _patientId = sp.getString("patientId", "0");
+                BigInteger patientId = new BigInteger(_patientId);
+                Gson gson = new Gson();
+                String json = sp.getString("googleDriveService", "");
+                Drive googleDriveService = gson.fromJson(json, Drive.class);
+                DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                mDriveServiceHelper.giveWriteAccessForXMillis(reportsFolderId, pathologyEmail, 2*60*1000);
+                BlockchainHelper.payToPathology(patientId, pathologyId, fees, msg);
+                Toast.makeText(getContext(), "Paid the Pathology!", Toast.LENGTH_SHORT).show();
+                view.findViewById(R.id.button_pay).setEnabled(false);
+            });
+            thread.start();
         });
         return view;
     }
