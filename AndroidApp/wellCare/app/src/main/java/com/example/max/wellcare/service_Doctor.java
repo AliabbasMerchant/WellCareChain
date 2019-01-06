@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.google.api.services.drive.Drive;
 import com.google.gson.Gson;
 
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.WalletUtils;
+
 import java.math.BigInteger;
 import java.util.Collections;
 
@@ -80,16 +83,25 @@ public class service_Doctor extends Fragment {
         allowAccessButton.setOnClickListener(v -> {
             BigInteger docId = new BigInteger(qrText.substring(0, qrText.indexOf(',')));
             Thread thread = new Thread(() -> {
-                String doctorEmail = BlockchainHelper.getDoctorEmail(docId);
-                String folderId = sp.getString("folderId", "");
-                Gson gson = new Gson();
-                String json = sp.getString("googleDriveService", "");
-                Drive googleDriveService = gson.fromJson(json, Drive.class);
-                DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-                mDriveServiceHelper.createPermission(folderId, doctorEmail, "writer")
-                        .addOnSuccessListener(id -> permissionId = id)
-                        .addOnFailureListener(exception ->
-                                Log.e(TAG, "Couldn't allow access.", exception));
+                try {
+                    Credentials credentials = WalletUtils.loadCredentials(
+                            "aliabbas",
+                            new java.io.File("Cred.json"));
+                    String doctorEmail = BlockchainHelper.getDoctorEmail(docId, credentials);
+                    String folderId = sp.getString("folderId", "");
+                    Gson gson = new Gson();
+                    String json = sp.getString("googleDriveService", "");
+                    Drive googleDriveService = gson.fromJson(json, Drive.class);
+                    DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                    mDriveServiceHelper.createPermission(folderId, doctorEmail, "writer")
+                            .addOnSuccessListener(id -> permissionId = id)
+                            .addOnFailureListener(exception ->
+                                    Log.e(TAG, "Couldn't allow access.", exception));
+                } catch (Exception e) {
+                    Log.e(TAG, "getCredentials: error Credentials are null", e);
+                    e.printStackTrace();
+                }
+
             });
             thread.start();
         });
@@ -111,10 +123,19 @@ public class service_Doctor extends Fragment {
                 BigInteger patientId = new BigInteger(sp.getString("patientId", "0"));
 
                 Thread thread = new Thread(() -> {
-                    BlockchainHelper.payToDoctor(patientId, docId, fees);
-                    Toast.makeText(getContext(), "Paid the Doctor!", Toast.LENGTH_SHORT).show();
-                    view.findViewById(R.id.button_pay).setEnabled(false);
-                    view.findViewById(R.id.button_allowAccess).setEnabled(false);
+                    try {
+                        Credentials credentials = WalletUtils.loadCredentials(
+                                "aliabbas",
+                                new java.io.File("Cred.json"));
+                        BlockchainHelper.payToDoctor(patientId, docId, fees, credentials);
+                        Toast.makeText(getContext(), "Paid the Doctor!", Toast.LENGTH_SHORT).show();
+                        view.findViewById(R.id.button_pay).setEnabled(false);
+                        view.findViewById(R.id.button_allowAccess).setEnabled(false);
+                    } catch (Exception e) {
+                        Log.e(TAG, "getCredentials: error Credentials are null", e);
+                        e.printStackTrace();
+                    }
+
                 });
                 thread.start();
             }

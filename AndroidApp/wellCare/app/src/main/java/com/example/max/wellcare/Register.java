@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.WalletUtils;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -73,40 +75,41 @@ public class Register extends AppCompatActivity {
             SharedPreferences.Editor editor = pref.edit();
 
             mDriveServiceHelper.createFolder("WellCareChain", Collections.singletonList("root"))
-                .addOnSuccessListener(fileId -> {
-                    editor.putString("folderId", fileId);
-                    mDriveServiceHelper.createFolder("Prescription", Collections.singletonList(fileId))
-                            .addOnSuccessListener(id -> {
-                                editor.putString("presFolderId", id);
-                            })
-                            .addOnFailureListener(exception ->
-                                    Log.e(TAG, "Couldn't create file.", exception));
-                    mDriveServiceHelper.createFolder("Emergency Info", Collections.singletonList(fileId))
-                            .addOnSuccessListener(id -> {
-                                editor.putString("infoFolderId", id);
-                                mDriveServiceHelper.makePublicReadable(id)
-                                        .addOnSuccessListener(permissionId -> {})
-                                        .addOnFailureListener(exception ->
-                                                Log.e(TAG, "Couldn't make emergency info public.", exception));
-                            })
-                            .addOnFailureListener(exception ->
-                                    Log.e(TAG, "Couldn't create file.", exception));
-                    mDriveServiceHelper.createFolder("Reports", Collections.singletonList(fileId))
-                            .addOnSuccessListener(id -> {
-                                editor.putString("reportsFolderId", id);
-                            })
-                            .addOnFailureListener(exception ->
-                                    Log.e(TAG, "Couldn't create file.", exception));
-                    mDriveServiceHelper.createFolder("Doctor Reports", Collections.singletonList(fileId))
-                            .addOnSuccessListener(id -> {
-                                editor.putString("docRepFolderId", id);
-                            })
-                            .addOnFailureListener(exception ->
-                                    Log.e(TAG, "Couldn't create file.", exception));
-                    editor.commit();
-                })
-                .addOnFailureListener(exception ->
-                        Log.e(TAG, "Couldn't create file.", exception));
+                    .addOnSuccessListener(fileId -> {
+                        editor.putString("folderId", fileId);
+                        mDriveServiceHelper.createFolder("Prescription", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("presFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Emergency Info", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("infoFolderId", id);
+                                    mDriveServiceHelper.makePublicReadable(id)
+                                            .addOnSuccessListener(permissionId -> {
+                                            })
+                                            .addOnFailureListener(exception ->
+                                                    Log.e(TAG, "Couldn't make emergency info public.", exception));
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Reports", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("reportsFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        mDriveServiceHelper.createFolder("Doctor Reports", Collections.singletonList(fileId))
+                                .addOnSuccessListener(id -> {
+                                    editor.putString("docRepFolderId", id);
+                                })
+                                .addOnFailureListener(exception ->
+                                        Log.e(TAG, "Couldn't create file.", exception));
+                        editor.commit();
+                    })
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't create file.", exception));
             Log.e(TAG, "register: Made google drive folders");
             folderId = pref.getString("folderId", "root");
             presFolderId = pref.getString("presFolderId", "root");
@@ -118,6 +121,7 @@ public class Register extends AppCompatActivity {
             Log.e(TAG, "register: Drive service helper is null");
         }
     }
+
     private void registerOnBlockchain() {
         Log.e(TAG, "registerOnBlockchain: in");
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -133,7 +137,7 @@ public class Register extends AppCompatActivity {
             osw.close();
             Log.e(TAG, "register: credentials file written");
         } catch (IOException e) {
-            Log.e(TAG, "register: Error");
+            Log.e(TAG, "register: Error Could not write credentials file");
             e.printStackTrace();
         }
         String sAddress = "c893fcb1aebc239df920cac5508b7cd37e35160c";
@@ -150,17 +154,26 @@ public class Register extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
 
-        Log.e(TAG, "registerOnBlockchain: address = "+sAddress);
+        Log.e(TAG, "registerOnBlockchain: address = " + sAddress);
         Thread thread = new Thread(() -> {
-            try  {
-                patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL);
-                editor.putString("patientId", patientId.toString());
-                editor.putString("address", sAddress);
-                editor.commit();
-                Log.e(TAG, "registerOnBlockchain: done");
-                editor.putBoolean("registered", true);
-                Intent i = new Intent(this, MainActivity.class);
-                startActivity(i);
+            try {
+                try {
+                    Credentials credentials = WalletUtils.loadCredentials(
+                            "aliabbas",
+                            new java.io.File("Cred.json"));
+                    patientId = BlockchainHelper.register(name, emailAddress, driveURL, presURL, infoURL, reportsURL, credentials);
+                    editor.putString("patientId", patientId.toString());
+                    editor.putString("address", sAddress);
+                    editor.commit();
+                    Log.e(TAG, "registerOnBlockchain: done");
+                    editor.putBoolean("registered", true);
+                    Intent i = new Intent(this, MainActivity.class);
+                    startActivity(i);
+                } catch (Exception e) {
+                    Log.e(TAG, "getCredentials: error Credentials are null", e);
+                    e.printStackTrace();
+                }
+
             } catch (Exception e) {
                 Log.e(TAG, "registerOnBlockchain: ", e);
                 e.printStackTrace();
@@ -174,7 +187,7 @@ public class Register extends AppCompatActivity {
         Log.e(TAG, "onActivityResult: " + requestCode + resultCode + resultData);
         if (resultCode == Activity.RESULT_OK) {
             Log.e(TAG, "onActivityResult: result code matches");
-            if(resultData != null) {
+            if (resultData != null) {
                 Log.e(TAG, "onActivityResult: resultData is null");
                 handleSignInResult(resultData);
             }
@@ -189,10 +202,10 @@ public class Register extends AppCompatActivity {
         Log.e(TAG, "Requesting sign-in");
 
         GoogleSignInOptions signInOptions =
-            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestScopes(new Scope(DriveScopes.DRIVE_FILE), new Scope(DriveScopes.DRIVE), new Scope(DriveScopes.DRIVE_APPDATA))
-                .build();
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestScopes(new Scope(DriveScopes.DRIVE_FILE), new Scope(DriveScopes.DRIVE), new Scope(DriveScopes.DRIVE_APPDATA))
+                        .build();
         GoogleSignInClient client = GoogleSignIn.getClient(this, signInOptions);
         Log.e(TAG, "requestSignIn: Strarting Activity For Result");
         startActivityForResult(client.getSignInIntent(), REQUEST_CODE_SIGN_IN);
@@ -204,19 +217,20 @@ public class Register extends AppCompatActivity {
      */
     private void handleSignInResult(Intent result) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
-            .addOnSuccessListener(googleAccount -> {
-                emailAddress = googleAccount.getEmail();
-                name = googleAccount.getDisplayName();
-                Log.e(TAG, "Signed in as " + googleAccount.getEmail());
-                Log.e(TAG, "Signed in as " + googleAccount.getDisplayName());
+                .addOnSuccessListener(googleAccount -> {
+                    emailAddress = googleAccount.getEmail();
+                    name = googleAccount.getDisplayName();
+                    Log.e(TAG, "Signed in as " + googleAccount.getEmail());
+                    Log.e(TAG, "Signed in as " + googleAccount.getDisplayName());
+                    Toast.makeText(this, "Signed in as " + googleAccount.getDisplayName(), Toast.LENGTH_SHORT).show();
 
-                mDriveServiceHelper = DriveServiceHelper.getGoogleDriveServiceHelper(this, googleAccount);
+                    mDriveServiceHelper = DriveServiceHelper.getGoogleDriveServiceHelper(this, googleAccount);
 
-                SharedPreferences  mPrefs = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-                mPrefs.edit().putString("googleAccount", new Gson().toJson(googleAccount)).commit();
-                Log.e(TAG, "handleSignInResult: Sign in completed");
-            })
-            .addOnFailureListener(exception -> Log.e(TAG, "Unable to sign in.", exception));
+                    SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+                    mPrefs.edit().putString("googleAccount", new Gson().toJson(googleAccount)).commit();
+                    Log.e(TAG, "handleSignInResult: Sign in completed");
+                })
+                .addOnFailureListener(exception -> Log.e(TAG, "Unable to sign in.", exception));
     }
 
 }

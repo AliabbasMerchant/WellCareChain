@@ -1,6 +1,8 @@
 package com.example.max.wellcare;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONObject;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
@@ -12,12 +14,17 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.Contract;
 import org.web3j.tx.Transfer;
+import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -25,6 +32,8 @@ import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 import java.util.UUID;
+
+import static android.content.Context.MODE_PRIVATE;
 import static org.web3j.crypto.Keys.createEcKeyPair;
 import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 import static org.web3j.tx.Transfer.GAS_LIMIT;
@@ -32,18 +41,19 @@ import static org.web3j.tx.Transfer.GAS_LIMIT;
 class BlockchainHelper {
     static String sAddress;
     private static String URL = "http://192.168.43.23:8545";
-    private static String ContractAddress = "0x0x3D18a44b8609f1f5e4aD4235cBb8d9DE0Ea725d2";
+    private static String ContractAddress = "0xa7F05d4e8ebf448149F38C8614Ab64dd1191f6C1";
     private static final String TAG = "BlockchainHelper";
-    static BigInteger register(String _name, String _email, String _driveURL, String _presURL, String _infoURL, String _reportsURL) {
+    static BigInteger register(String _name, String _email, String _driveURL, String _presURL, String _infoURL, String _reportsURL, Credentials credentials) {
 //        Web3j web3j = Web3jFactory.build(new HttpService(URL));
         Web3j web3j = Web3j.build(new HttpService(URL));
         BigInteger patientId = new BigInteger("-1");
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-            Credentials credentials = getCredentials();
+//            Credentials credentials = getCredentials();
             logger("Credentials loaded");
-            WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+            Log.e(TAG, "register: creds = " + credentials);
+            WellCareChain contract = new WellCareChain(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
             try {
                 contract.newPatient(_name, _email, _driveURL, _presURL, _infoURL, _reportsURL).send();
                 patientId = contract.noOfPatients().send();
@@ -59,18 +69,6 @@ class BlockchainHelper {
     }
     private static void logger(String msg) {
         Log.e(TAG, "logger: " + msg);
-    }
-
-    static Credentials getCredentials() {
-        Credentials credentials = null;
-        try {
-            credentials = WalletUtils.loadCredentials(
-                    "aliabbas",
-                    "Cred.json");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return credentials;
     }
 //    static void function() throws Exception{
 //        logger("Sending 1 Wei ("
@@ -139,7 +137,7 @@ class BlockchainHelper {
 //        return "Name: " + name + "\nEmail Address: " + email + "\nLicense: " + license + "\nAddress: " + physicalAdd;
 //    }
 
-    static void payToDoctor(BigInteger patientId, BigInteger doctorId, BigInteger fees) {
+    static void payToDoctor(BigInteger patientId, BigInteger doctorId, BigInteger fees, Credentials credentials) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -147,7 +145,7 @@ class BlockchainHelper {
             e.printStackTrace();
         }
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        Credentials credentials = getCredentials();
+//        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -157,7 +155,7 @@ class BlockchainHelper {
         }
     }
 
-    static void payToPathology(BigInteger patientId, BigInteger pathologyId, BigInteger fees, String info) {
+    static void payToPathology(BigInteger patientId, BigInteger pathologyId, BigInteger fees, String info, Credentials credentials) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -165,7 +163,7 @@ class BlockchainHelper {
             e.printStackTrace();
         }
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        Credentials credentials = getCredentials();
+//        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -175,7 +173,7 @@ class BlockchainHelper {
         }
     }
 
-    static void payToChemist(BigInteger patientId, BigInteger chemistId, BigInteger fees) {
+    static void payToChemist(BigInteger patientId, BigInteger chemistId, BigInteger fees, Credentials credentials) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -183,7 +181,7 @@ class BlockchainHelper {
             e.printStackTrace();
         }
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        Credentials credentials = getCredentials();
+//        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -193,7 +191,7 @@ class BlockchainHelper {
         }
     }
 
-    static String getDoctorEmail(BigInteger doctorId) {
+    static String getDoctorEmail(BigInteger doctorId, Credentials credentials) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -201,7 +199,7 @@ class BlockchainHelper {
             e.printStackTrace();
         }
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        Credentials credentials = getCredentials();
+//        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {
@@ -212,7 +210,7 @@ class BlockchainHelper {
         return "";
     }
 
-    static String getPathologyEmail(BigInteger pathologyId) {
+    static String getPathologyEmail(BigInteger pathologyId, Credentials credentials) {
         Web3j web3j = Web3j.build(new HttpService(URL));
         try {
             logger("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
@@ -220,7 +218,7 @@ class BlockchainHelper {
             e.printStackTrace();
         }
 //        Credentials credentials = getCredentials(sPrivateKeyInHex);
-        Credentials credentials = getCredentials();
+//        Credentials credentials = getCredentials();
         logger("Credentials loaded");
         WellCareChain contract = WellCareChain.load(ContractAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
         try {

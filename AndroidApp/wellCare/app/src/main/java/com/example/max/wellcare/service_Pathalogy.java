@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.google.api.services.drive.Drive;
 import com.google.gson.Gson;
 
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.WalletUtils;
+
 import java.math.BigInteger;
 
 import static android.app.Activity.RESULT_OK;
@@ -81,18 +84,26 @@ public class service_Pathalogy extends Fragment {
             BigInteger pathologyId = new BigInteger(qrText.substring(qrText.indexOf(',')+1, qrText.lastIndexOf(',')));
             BigInteger fees = new BigInteger(qrText.substring(qrText.lastIndexOf(',') + 1));
             Thread thread = new Thread(() -> {
-                String pathologyEmail = BlockchainHelper.getPathologyEmail(pathologyId);
-                String reportsFolderId = sp.getString("reportsFolderId", "");
-                String _patientId = sp.getString("patientId", "0");
-                BigInteger patientId = new BigInteger(_patientId);
-                Gson gson = new Gson();
-                String json = sp.getString("googleDriveService", "");
-                Drive googleDriveService = gson.fromJson(json, Drive.class);
-                DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-                mDriveServiceHelper.giveWriteAccessForXMillis(reportsFolderId, pathologyEmail, 2*60*1000);
-                BlockchainHelper.payToPathology(patientId, pathologyId, fees, msg);
-                Toast.makeText(getContext(), "Paid the Pathology!", Toast.LENGTH_SHORT).show();
-                view.findViewById(R.id.button_pay).setEnabled(false);
+                try {
+                    Credentials credentials = WalletUtils.loadCredentials(
+                            "aliabbas",
+                            new java.io.File("Cred.json"));
+                    String pathologyEmail = BlockchainHelper.getPathologyEmail(pathologyId, credentials);
+                    String reportsFolderId = sp.getString("reportsFolderId", "");
+                    String _patientId = sp.getString("patientId", "0");
+                    BigInteger patientId = new BigInteger(_patientId);
+                    Gson gson = new Gson();
+                    String json = sp.getString("googleDriveService", "");
+                    Drive googleDriveService = gson.fromJson(json, Drive.class);
+                    DriveServiceHelper mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                    mDriveServiceHelper.giveWriteAccessForXMillis(reportsFolderId, pathologyEmail, 2*60*1000);
+                    BlockchainHelper.payToPathology(patientId, pathologyId, fees, msg, credentials);
+                    Toast.makeText(getContext(), "Paid the Pathology!", Toast.LENGTH_SHORT).show();
+                    view.findViewById(R.id.button_pay).setEnabled(false);
+                } catch (Exception e) {
+                    Log.e(TAG, "getCredentials: error Credentials are null", e);
+                    e.printStackTrace();
+                }
             });
             thread.start();
         });
